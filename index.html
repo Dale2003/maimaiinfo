@@ -23,7 +23,7 @@
             display: none;
             z-index: 1000;
             width: 40%; /* 与搜索框宽度一致 */
-            left: 50%; /* 水平居中 */
+            left: 40%; /* 水平居中 */
         }
         #modal-overlay {
             display: none;
@@ -44,9 +44,9 @@
             background: white;
             border: 1px solid #ccc;
             border-radius: 10px;
-            padding: 20px;
+            padding: 10px;
             z-index: 1000;
-            width: 80%;
+            width: 90%;
             max-width: 400px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
@@ -116,12 +116,10 @@
                 <ul>
                     ${music.fit_diff.map(diff => `<li>${diff.toFixed(3)}</li>`).join("")}
                 </ul>
-                <p>艺术家: ${music.artist}</p>
-                <p>流派: ${music.genre}</p>
-                <p>版本: ${music.version}</p>
-                <p>BPM: ${music.bpm}</p>
-                <p>红谱定数: ${music.expds}</p>
-                <p>紫谱定数: ${music.masds}</p>
+                <p>艺术家: ${music.basic_info.artist}</p>
+                <p>流派: ${music.basic_info.genre}</p>
+                <p>版本: ${music.basic_info.from}</p>
+                <p>BPM: ${music.basic_info.bpm}</p>
             `;
             document.getElementById("modal-image").src = `https://assets2.lxns.net/maimai/jacket/${music.id % 10000}.png`;
             document.getElementById("modal-overlay").style.display = "block";
