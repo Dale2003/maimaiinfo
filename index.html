@@ -23,7 +23,7 @@
             display: none;
             z-index: 1000;
             width: 40%; /* 与搜索框宽度一致 */
-            left: 30%; /* 水平居中 */
+            left: 50%; /* 水平居中 */
         }
         #modal-overlay {
             display: none;
@@ -66,11 +66,11 @@
         }
     </style>
 </head>
-<body>
+<div>
     <div id="search-container">
         <h1>maimai查询</h1>
+        </div><button id="search-button" style="font-size: 20px; padding: 10px 20px;">查询</button></div>
         <input type="text" id="guess-id" placeholder="输入曲目id或别名" style="font-size: 18px; padding: 10px; width: 60%;" oninput="searchMatches()">
-        <button id="search-button" style="font-size: 18px; padding: 10px 20px;">查询</button>
         <div id="search-results"></div>
     </div>
 
@@ -110,7 +110,7 @@
             // 显示模态框
             document.getElementById("modal-title").textContent = music.title;
             document.getElementById("modal-content").innerHTML = `
-                <p>类型: ${music.type}</p>
+                <p>ID:${music.type}   类型: ${music.type}</p>
                 <p>别名: ${music.alias ? music.alias.join(", ") : "无"}</p>
                 <p>等级: ${music.level.join(", ")}</p>
                 <p>定数: ${music.ds.join(", ")}</p>
