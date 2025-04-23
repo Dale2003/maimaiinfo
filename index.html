@@ -107,15 +107,32 @@
             transition: width 0.3s;
         }
     </style>
+    <style>
+        /* 加载圆环样式 */
+        .loading-spinner {
+            border: 8px solid #f3f3f3; /* 灰色背景 */
+            border-top: 8px solid #4caf50; /* 绿色前景 */
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite; /* 持续旋转动画 */
+        }
+    
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- 加载窗口 -->
     <div id="loading-overlay">
+        <div class="loading-spinner"></div>
         <p>加载中，请稍候...</p>
-        <div id="progress-bar">
-            <div>
-            </div>
-        </div>
         <p>文件资源较大，请耐心等待～</p>
     </div>
 
@@ -140,16 +157,13 @@
 
         async function loadMusicData() {
             try {
-                // 直接获取 JSON 数据
+                // 获取 JSON 数据
                 const response = await fetch("static/all_data.json");
 
                 // 检查响应是否成功
                 if (!response.ok) {
                     throw new Error(`HTTP 错误！状态码: ${response.status}`);
                 }
-
-                // 更新进度条为 100%
-                updateProgressBar(100);
 
                 // 解析 JSON 数据
                 musicInfo = await response.json();
@@ -163,15 +177,6 @@
             }
         }
 
-        function updateProgressBar(percentage) {
-            const progressBar = document.querySelector("#progress-bar div");
-            progressBar.style.width = percentage + "%";
-
-            // 如果进度条达到 100%，显示“解析数据中...”提示
-            if (percentage === 100) {
-                progressBar.textContent = "解析数据中...";
-            }
-        }
 
         // 页面加载时调用数据加载函数
         document.addEventListener("DOMContentLoaded", loadMusicData);
@@ -200,7 +205,7 @@
                 <p>ID:${music.id} &emsp; &emsp; 类型: ${music.type}</p>
                 <p>等级: ${music.level.join(", ")}</p>
                 <p>定数: ${music.ds.join(", ")}</p>
-                <p>拟合定数: ${music.fit_diff.map(diff => `${diff.toFixed(3)}`).join(", ")} </p>
+                <p>拟合定数: ${music.fit_diff.map(diff => `${diff.toFixed(2)}`).join(", ")} </p>
                 <p>艺术家: ${music.basic_info.artist} &emsp; &emsp; 流派: ${music.basic_info.genre}</p>
                 <p>版本: ${music.basic_info.from} &emsp; &emsp; BPM: ${music.basic_info.bpm}</p>
                 <p>别名: ${music.alias ? music.alias.join(", ") : "无"}</p>

@@ -25,7 +25,7 @@ for id in chart["charts"]:
     for c in chart["charts"][id]:
         # print(c)
         try:
-            new_data[id]["fit_diff"].append(c['fit_diff'])
+            new_data[id]["fit_diff"].append(round(c['fit_diff'], 2))
         except KeyError:
             pass
 
