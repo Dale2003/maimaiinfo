@@ -23,7 +23,7 @@
             overflow-y: auto;
             display: none;
             z-index: 1000;
-            width: 60%; /* 与搜索框宽度一致 */
+            width: 50%; /* 与搜索框宽度一致 */
             left: 30%; /* 水平居中 */
         }
         #modal-overlay {
@@ -175,12 +175,12 @@
             // 显示模态框
             document.getElementById("modal-title").textContent = music.title;
             document.getElementById("modal-content").innerHTML = `
-                <p>ID:${music.id} &emsp&emsp 类型: ${music.type}</p>
+                <p>ID:${music.id} &emsp; &emsp; 类型: ${music.type}</p>
                 <p>等级: ${music.level.join(", ")}</p>
                 <p>定数: ${music.ds.join(", ")}</p>
                 <p>拟合定数: ${music.fit_diff.map(diff => `${diff.toFixed(3)}`).join(", ")} </p>
-                <p>艺术家: ${music.basic_info.artist} &emsp&emsp 流派: ${music.basic_info.genre}</p>
-                <p>版本: ${music.basic_info.from} &emsp&emsp BPM: ${music.basic_info.bpm}</p>
+                <p>艺术家: ${music.basic_info.artist} &emsp; &emsp; 流派: ${music.basic_info.genre}</p>
+                <p>版本: ${music.basic_info.from} &emsp; &emsp; BPM: ${music.basic_info.bpm}</p>
                 <p>别名: ${music.alias ? music.alias.join(", ") : "无"}</p>
             `;
             document.getElementById("modal-image").src = `https://assets2.lxns.net/maimai/jacket/${music.id % 10000}.png`;
