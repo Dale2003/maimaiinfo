@@ -22,9 +22,8 @@
             overflow-y: auto;
             display: none;
             z-index: 1000;
-            width: 60%; /* 与搜索框宽度一致 */
+            width: 40%; /* 与搜索框宽度一致 */
             left: 50%; /* 水平居中 */
-            transform: translateX(-50%); /* 调整位置对齐搜索框 */
         }
         #modal-overlay {
             display: none;
@@ -113,7 +112,10 @@
                 <p>别名: ${music.alias ? music.alias.join(", ") : "无"}</p>
                 <p>等级: ${music.level.join(", ")}</p>
                 <p>定数: ${music.ds.join(", ")}</p>
-                <>拟合定数: ${music.fit_diff.toFixed(3).join(", ")}</p>
+                <p>拟合定数:</p>
+                <ul>
+                    ${music.fit_diff.map(diff => `<li>${diff.toFixed(3)}</li>`).join("")}
+                </ul>
                 <p>艺术家: ${music.artist}</p>
                 <p>流派: ${music.genre}</p>
                 <p>版本: ${music.version}</p>
