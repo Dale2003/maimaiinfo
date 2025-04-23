@@ -181,6 +181,11 @@
                 return;
             }
 
+            // 清空模态框内容
+            const modalContent = document.getElementById("modal-content");
+            modalContent.innerHTML = "";
+
+
             // 显示模态框
             document.getElementById("modal-title").textContent = music.title;
             document.getElementById("modal-content").innerHTML = `
