@@ -198,7 +198,7 @@
                 <p>别名: ${music.alias ? music.alias.join(", ") : "无"}</p>
             `;
             let cid_to_level = ['Basic', 'Advanced', 'Expert', 'Master', 'Re:Master'];
-            document.getElementById("modal-content").insertAdjacentHTML("afterend", `
+            document.getElementById("img-chart").innerHTML = `
                 <div style="display: flex; margin-top: 20px;">
                     <div style="flex: 1; text-align: center;">
                         <img id="modal-image" src="https://assets2.lxns.net/maimai/jacket/${music.id % 10000}.png" width="100%" height="100%" max-width="200px" max-height="200px">
@@ -226,7 +226,7 @@
                         </table>
                     </div>
                 </div>
-            `);
+            `;
             document.getElementById("modal-overlay").style.display = "block";
             document.getElementById("info-modal").style.display = "block";
         });
