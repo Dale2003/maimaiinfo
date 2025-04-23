@@ -98,7 +98,7 @@
                 return;
             }
 
-            let music = musicInfo[input] || Object.values(musicInfo).find(m => musicAlias[m.id]?.includes(input));
+            let music = musicInfo[input];
             if (!music) {
                 alert("未找到相关曲目！");
                 return;
