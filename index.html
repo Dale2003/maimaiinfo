@@ -114,7 +114,7 @@
     <div id="search-container">
         <h1>maimai查询</h1>
         <button id="search-button" style="font-size: 20px; padding: 10px 20px;">查询</button>
-        <input type="text" id="guess-id" placeholder="输入曲目id或别名" style="font-size: 18px; padding: 10px; width: 60%;" oninput="searchMatches()">
+        <input type="text" id="guess-id" placeholder="输入曲目id" style="font-size: 18px; padding: 10px; width: 60%;" oninput="searchMatches()">
         <div id="search-results"></div>
     </div>
 
@@ -172,7 +172,7 @@
         document.getElementById("search-button").addEventListener("click", () => {
             const input = document.getElementById("guess-id").value.trim().toLowerCase();
             if (!input) {
-                alert("请输入曲目 ID 或别名！");
+                alert("请输入曲目 ID");
                 return;
             }
 
@@ -193,26 +193,28 @@
                 <p>版本: ${music.basic_info.from} &emsp; &emsp; BPM: ${music.basic_info.bpm}</p>
                 <p>别名: ${music.alias ? music.alias.join(", ") : "无"}</p>
             `;
-
+            let cid_to_level = ['Basic', 'Advanced', 'Expert', 'Master', 'Re:Master'];
             document.getElementById("modal-content").insertAdjacentHTML("afterend", `
                 <div style="display: flex; margin-top: 20px;">
                     <div style="flex: 1; text-align: center;">
-                        <img id="modal-image" src="https://assets2.lxns.net/maimai/jacket/${music.id % 10000}.png" alt="曲绘" style="width: 100%; max-width: 200px;">
+                        <img id="modal-image" src="https://assets2.lxns.net/maimai/jacket/${music.id % 10000}.png" width="100%" height="100%" max-width="200px" max-height="200px">
                     </div>
                     <div style="flex: 2; padding-left: 20px;">
                         <table border="1" style="width: 100%; border-collapse: collapse; text-align: center;">
                             <thead>
                                 <tr>
-                                    <th>谱面编号</th>
-                                    <th>音符数</th>
+                                    <th>难度</th>
+                                    <th>音符</th>
+                                    <th>物量</th>
                                     <th>谱师</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 ${music.charts.map((chart, index) => `
                                     <tr>
-                                        <td>${index + 1}</td>
-                                        <td>${chart.notes.join(", ")}</td>
+                                        <td>${cid_to_level[index]}</td>
+                                        <td>${chart.notes.join("/")}</td>
+                                        <td>${chart.notes.reduce((a, b) => a + b, 0)}</td>
                                         <td>${chart.charter}</td>
                                     </tr>
                                 `).join("")}
