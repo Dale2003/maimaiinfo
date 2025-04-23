@@ -182,9 +182,7 @@
                 alert("加载数据失败，请刷新页面重试！");
             }
         }
-        document.getElementById("info-modal").style.display = "block";
-        document.getElementById("modal-content").scrollTop = 0; // 确保内容滚动到顶部
-
+        
         // 页面加载时调用数据加载函数
         document.addEventListener("DOMContentLoaded", loadMusicData);
 
