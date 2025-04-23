@@ -69,7 +69,7 @@
             max-height: 300px; /* 设置最大高度 */
             overflow-y: auto; /* 启用垂直滚动 */
             /*初始位置在最上面*/
-            display: flex;
+            scroll-behavior: auto;
         }
         #img-chart {
             display: flex;
@@ -140,6 +140,10 @@
 
     <div id="search-container">
         <h1>maimai查询</h1>
+        <div style="position: absolute; top: 10px; right: 10px;">
+            <button id="about-button" style="font-size: 16px; padding: 5px 10px;">关于</button>
+        </div>
+        <p>made by 宇航员Dale</p>
         <button id="search-button" style="font-size: 20px; padding: 10px 20px;">查询</button>
         <input type="text" id="guess-id" placeholder="输入曲目id" style="font-size: 18px; padding: 10px; width: 60%;" oninput="searchMatches()">
         <div id="search-results"></div>
@@ -178,7 +182,8 @@
                 alert("加载数据失败，请刷新页面重试！");
             }
         }
-
+        document.getElementById("info-modal").style.display = "block";
+        document.getElementById("modal-content").scrollTop = 0; // 确保内容滚动到顶部
 
         // 页面加载时调用数据加载函数
         document.addEventListener("DOMContentLoaded", loadMusicData);
@@ -213,6 +218,8 @@
                 <p>版本: ${music.basic_info.from} &emsp; &emsp; BPM: ${music.basic_info.bpm}</p>
                 <p>别名: ${music.alias ? music.alias.join(", ") : "无"}</p>
             `;
+            document.getElementById("info-modal").style.display = "block";
+            document.getElementById("modal-content").scrollTop = 0; // 确保内容滚动到顶部
             let cid_to_level = ['Basic', 'Advanced', 'Expert', 'Master', 'Re:Master'];
             document.getElementById("img-chart").innerHTML = `
                 <div style="display: flex; margin-top: 20px;">
