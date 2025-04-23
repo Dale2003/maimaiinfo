@@ -113,7 +113,9 @@
     <div id="loading-overlay">
         <p>加载中，请稍候...</p>
         <div id="progress-bar">
-            <div></div>
+            <div>
+                <p>文件资源较大，请耐心等待～</p>
+            </div>
         </div>
     </div>
 
@@ -136,44 +138,58 @@
     <script>
         let musicInfo = {}; // 假设曲目信息从外部加载
 
-
-        // 从 static/all_data.json 加载数据
-        fetch("static/all_data.json")
-            .then(response => {
+        async function loadMusicData() {
+            try {
+                const response = await fetch("static/all_data.json");
                 const reader = response.body.getReader();
                 const contentLength = +response.headers.get("Content-Length");
                 let receivedLength = 0;
                 let chunks = [];
-                return reader.read().then(function processResult(result) {
-                    if (result.done) {
-                        const allChunks = new Uint8Array(receivedLength);
-                        let position = 0;
-                        for (let chunk of chunks) {
-                            allChunks.set(chunk, position);
-                            position += chunk.length;
-                        }
-                        const text = new TextDecoder("utf-8").decode(allChunks);
-                        return JSON.parse(text);
-                    }
-                    chunks.push(result.value);
-                    receivedLength += result.value.length;
+                const decoder = new TextDecoder("utf-8");
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    chunks.push(value);
+                    receivedLength += value.length;
+
+                    // 更新进度条
                     const percentage = Math.round((receivedLength / contentLength) * 100);
                     updateProgressBar(percentage);
-                    return reader.read().then(processResult);
-                });
-            })
-            .then(data => {
-                musicInfo = data;
+                }
+
+                // 合并所有数据块并解析 JSON
+                const allChunks = new Uint8Array(receivedLength);
+                let position = 0;
+                for (let chunk of chunks) {
+                    allChunks.set(chunk, position);
+                    position += chunk.length;
+                }
+                const text = decoder.decode(allChunks);
+                musicInfo = JSON.parse(text);
+
+                // 数据加载完成后隐藏加载界面
                 document.getElementById("loading-overlay").style.display = "none";
                 document.getElementById("search-container").style.display = "block";
-            })
-            .catch(error => {
+            } catch (error) {
                 console.error("加载数据失败:", error);
                 alert("加载数据失败，请刷新页面重试！");
-            });
-        function updateProgressBar(percentage) {
-            document.querySelector("#progress-bar div").style.width = percentage + "%";
+            }
         }
+
+        function updateProgressBar(percentage) {
+            const progressBar = document.querySelector("#progress-bar div");
+            progressBar.style.width = percentage + "%";
+
+            // 如果进度条达到 100%，显示“解析数据中...”提示
+            if (percentage === 100) {
+                progressBar.textContent = "解析数据中...";
+            }
+        }
+
+        // 页面加载时调用数据加载函数
+        document.addEventListener("DOMContentLoaded", loadMusicData);
 
         document.getElementById("search-button").addEventListener("click", () => {
             const input = document.getElementById("guess-id").value.trim().toLowerCase();
