@@ -114,9 +114,9 @@
         <p>加载中，请稍候...</p>
         <div id="progress-bar">
             <div>
-                <p>文件资源较大，请耐心等待～</p>
             </div>
         </div>
+        <p>文件资源较大，请耐心等待～</p>
     </div>
 
     <div id="search-container">
@@ -140,34 +140,19 @@
 
         async function loadMusicData() {
             try {
+                // 直接获取 JSON 数据
                 const response = await fetch("static/all_data.json");
-                const reader = response.body.getReader();
-                const contentLength = +response.headers.get("Content-Length");
-                let receivedLength = 0;
-                let chunks = [];
-                const decoder = new TextDecoder("utf-8");
 
-                while (true) {
-                    const { done, value } = await reader.read();
-                    if (done) break;
-
-                    chunks.push(value);
-                    receivedLength += value.length;
-
-                    // 更新进度条
-                    const percentage = Math.round((receivedLength / contentLength) * 100);
-                    updateProgressBar(percentage);
+                // 检查响应是否成功
+                if (!response.ok) {
+                    throw new Error(`HTTP 错误！状态码: ${response.status}`);
                 }
 
-                // 合并所有数据块并解析 JSON
-                const allChunks = new Uint8Array(receivedLength);
-                let position = 0;
-                for (let chunk of chunks) {
-                    allChunks.set(chunk, position);
-                    position += chunk.length;
-                }
-                const text = decoder.decode(allChunks);
-                musicInfo = JSON.parse(text);
+                // 更新进度条为 100%
+                updateProgressBar(100);
+
+                // 解析 JSON 数据
+                musicInfo = await response.json();
 
                 // 数据加载完成后隐藏加载界面
                 document.getElementById("loading-overlay").style.display = "none";
