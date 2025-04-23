@@ -130,24 +130,31 @@
     <script>
         let musicInfo = {}; // 假设曲目信息从外部加载
 
-        // 模拟加载进度条
-        function updateProgressBar(percentage) {
-            document.querySelector("#progress-bar div").style.width = percentage + "%";
-        }
 
         // 从 static/all_data.json 加载数据
         fetch("static/all_data.json")
             .then(response => {
-                let loaded = 0;
-                const total = 100; // 假设总加载量为 100
-                const interval = setInterval(() => {
-                    loaded += 10;
-                    updateProgressBar(loaded);
-                    if (loaded >= total) {
-                        clearInterval(interval);
+                const reader = response.body.getReader();
+                const contentLength = +response.headers.get("Content-Length");
+                let receivedLength = 0;
+                let chunks = [];
+                return reader.read().then(function processResult(result) {
+                    if (result.done) {
+                        const allChunks = new Uint8Array(receivedLength);
+                        let position = 0;
+                        for (let chunk of chunks) {
+                            allChunks.set(chunk, position);
+                            position += chunk.length;
+                        }
+                        const text = new TextDecoder("utf-8").decode(allChunks);
+                        return JSON.parse(text);
                     }
-                }, 100); // 模拟加载进度
-                return response.json();
+                    chunks.push(result.value);
+                    receivedLength += result.value.length;
+                    const percentage = Math.round((receivedLength / contentLength) * 100);
+                    updateProgressBar(percentage);
+                    return reader.read().then(processResult);
+                });
             })
             .then(data => {
                 musicInfo = data;
@@ -158,6 +165,9 @@
                 console.error("加载数据失败:", error);
                 alert("加载数据失败，请刷新页面重试！");
             });
+        function updateProgressBar(percentage) {
+            document.querySelector("#progress-bar div").style.width = percentage + "%";
+        }
 
         document.getElementById("search-button").addEventListener("click", () => {
             const input = document.getElementById("guess-id").value.trim().toLowerCase();
@@ -183,7 +193,34 @@
                 <p>版本: ${music.basic_info.from} &emsp; &emsp; BPM: ${music.basic_info.bpm}</p>
                 <p>别名: ${music.alias ? music.alias.join(", ") : "无"}</p>
             `;
-            document.getElementById("modal-image").src = `https://assets2.lxns.net/maimai/jacket/${music.id % 10000}.png`;
+
+            document.getElementById("modal-content").insertAdjacentHTML("afterend", `
+                <div style="display: flex; margin-top: 20px;">
+                    <div style="flex: 1; text-align: center;">
+                        <img id="modal-image" src="https://assets2.lxns.net/maimai/jacket/${music.id % 10000}.png" alt="曲绘" style="width: 100%; max-width: 200px;">
+                    </div>
+                    <div style="flex: 2; padding-left: 20px;">
+                        <table border="1" style="width: 100%; border-collapse: collapse; text-align: center;">
+                            <thead>
+                                <tr>
+                                    <th>谱面编号</th>
+                                    <th>音符数</th>
+                                    <th>谱师</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${music.charts.map((chart, index) => `
+                                    <tr>
+                                        <td>${index + 1}</td>
+                                        <td>${chart.notes.join(", ")}</td>
+                                        <td>${chart.charter}</td>
+                                    </tr>
+                                `).join("")}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `);
             document.getElementById("modal-overlay").style.display = "block";
             document.getElementById("info-modal").style.display = "block";
         });
