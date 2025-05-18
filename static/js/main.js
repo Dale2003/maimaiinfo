@@ -222,14 +222,34 @@ function displaySongInfo() {
         return;
     }
 
-    // 清空模态框内容
-    const modalContent = document.getElementById("modal-content");
-    modalContent.innerHTML = "";
+    // 清空输入框
     guessIdInput.value = "";
 
-    // 显示模态框
+    // 设置标题
     document.getElementById("modal-title").textContent = music.title;
-    modalContent.innerHTML = `
+    
+    // 构建上部分：基本信息
+    const modalContent = document.getElementById("modal-content");
+    
+    // 确保模态框内部结构正确（如果需要重建）
+    infoModal.innerHTML = `
+        <div class="modal-header">
+            <h2 id="modal-title">${music.title}</h2>
+            <button id="close-modal" class="close-btn">&times;</button>
+        </div>
+        <div class="info-top-section" id="modal-content"></div>
+        <div class="info-bottom-section" id="img-chart"></div>
+        <div class="modal-footer">
+            <button id="close-modal-btn" class="btn">关闭</button>
+        </div>
+    `;
+    
+    // 重新获取内容区域元素（因为可能刚刚重建了DOM）
+    const contentSection = document.getElementById("modal-content");
+    const imgChartSection = document.getElementById("img-chart");
+    
+    // 填充基本信息
+    contentSection.innerHTML = `
         <p>ID:${music.id} &emsp; &emsp; 类型: ${music.type}</p>
         <p>等级: ${music.level.join(", ")}</p>
         <p>定数: ${music.ds.join(", ")}</p>
@@ -243,15 +263,15 @@ function displaySongInfo() {
         <p>别名: ${music.alias ? music.alias.join(", ") : "无"}</p>
     `;
     
-    // 设置谱面信息表格
+    // 填充下部分：封面和表格
     const cid_to_level = ['Basic', 'Advanced', 'Expert', 'Master', 'Re:Master'];
-    document.getElementById("img-chart").innerHTML = `
-        <div style="display: flex; margin-top: 20px;">
-            <div style="flex: 1; text-align: center;">
-                <img id="modal-image" src="https://assets2.lxns.net/maimai/jacket/${music.id % 10000}.png" width="100%" height="100%" max-width="200px" max-height="200px">
+    imgChartSection.innerHTML = `
+        <div class="song-info-display">
+            <div class="cover-container">
+                <img src="https://assets2.lxns.net/maimai/jacket/${music.id % 10000}.png" alt="${music.title}">
             </div>
-            <div style="flex: 2; padding-left: 20px;">
-                <table border="1" style="width: 100%; border-collapse: collapse; text-align: center;">
+            <div class="chart-info-container">
+                <table class="chart-info-table">
                     <thead>
                         <tr>
                             <th>难度</th>
@@ -276,7 +296,16 @@ function displaySongInfo() {
     `;
     
     // 确保内容滚动到顶部
-    modalContent.scrollTop = 0;
+    contentSection.scrollTop = 0;
+    imgChartSection.scrollTop = 0;
+    
+    // 添加关闭按钮事件监听
+    document.querySelectorAll('#close-modal, #close-modal-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            infoModal.style.display = 'none';
+            modalOverlay.style.display = 'none';
+        });
+    });
     
     // 显示模态框
     modalOverlay.style.display = "block";
