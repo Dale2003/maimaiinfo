@@ -14,6 +14,11 @@ const aboutModal = document.getElementById('about-modal');
 
 // 初始化
 document.addEventListener('DOMContentLoaded', () => {
+    // 确保模态框初始状态为隐藏
+    if (infoModal) infoModal.style.display = 'none';
+    if (modalOverlay) modalOverlay.style.display = 'none';
+    if (aboutModal) aboutModal.style.display = 'none';
+    
     // 尝试从缓存加载数据
     loadDataWithCache();
     
@@ -215,6 +220,12 @@ function displaySongInfo() {
     
     if (!input) {
         alert("请输入曲目 ID");
+        return;
+    }
+
+    // 检查musicInfo是否已加载
+    if (!musicInfo || Object.keys(musicInfo).length === 0) {
+        alert("数据尚未加载完成，请稍候再试");
         return;
     }
 
