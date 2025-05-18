@@ -4,44 +4,76 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>maimai查询</title>
+    <!-- 添加Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- 使用预加载来加速关键资源 -->
+    <link rel="preload" href="static/css/style.css" as="style">
     <link rel="stylesheet" href="static/css/style.css">
     <link rel="icon" href="static/img/favicon.ico" type="image/x-icon">
 </head>
 <body>
     <div id="loading-overlay">
-        <div class="loading-spinner"></div>
-        <p>加载中，请稍候...</p>
-        <p>文件资源较大，请耐心等待～</p>
+        <div class="loader">
+            <div class="loader-inner"></div>
+        </div>
+        <div class="loading-text">
+            <p>加载中，请稍候...</p>
+            <p id="loading-progress">正在加载数据 (0%)</p>
+            <p class="loading-tip">首次加载可能需要较长时间，后续将使用缓存加速</p>
+        </div>
     </div>
 
-    <div id="search-container">
-        <h1>maimai查询</h1>
-        <div class="about-button-container">
-            <button id="about-button">关于</button>
+    <div class="app-container">
+        <header>
+            <h1>maimai查询</h1>
+            <div class="header-actions">
+                <button id="about-button" class="btn btn-secondary">关于</button>
+            </div>
+        </header>
+
+        <div id="search-container">
+            <div class="search-box">
+                <input type="text" id="guess-id" placeholder="输入曲目名称、别名或ID" oninput="searchMatches()">
+                <button id="search-button" class="btn btn-primary">查询</button>
+            </div>
+            <div id="search-results" class="search-results"></div>
+            <p class="hint">提示：可以使用曲名、别名、ID的一部分检索，点击结果后自动填充曲目ID</p>
         </div>
-        <p>made by 宇航员Dale</p>
-        <button id="search-button">查询</button>
-        <input type="text" id="guess-id" placeholder="输入曲目id" oninput="searchMatches()">
-        <div id="search-results"></div>
-        <p class="hint">提示：可以使用曲名、别名、id的一部分检索，点击后自动填充曲目id。</p>
+
+        <footer>
+            <p>made by 宇航员Dale</p>
+        </footer>
     </div>
 
     <div id="modal-overlay"></div>
-    <div id="info-modal">
-        <h2 id="modal-title">曲目信息</h2>
-        <p id="modal-content"></p>
-        <div id="img-chart"></div>
-        <button id="close-modal">关闭</button>
+    
+    <div id="info-modal" class="modal">
+        <div class="modal-header">
+            <h2 id="modal-title">曲目信息</h2>
+            <button id="close-modal" class="close-btn">&times;</button>
+        </div>
+        <div class="modal-content">
+            <p id="modal-content"></p>
+            <div id="img-chart" class="chart-container"></div>
+        </div>
     </div>
 
-    <div id="about-modal">
-        <h2>关于</h2>
-        <p>项目地址：<a href="https://github.com/Dale2003/maimaiinfo" target="_blank">https://github.com/Dale2003/maimaiinfo</a></p>
-        <p>致谢：</p>
-        <p>   谱面数据来源：水鱼查分器（<a href="https://www.diving-fish.com/maimaidx/prober/" target="_blank">https://www.diving-fish.com/maimaidx/prober/</a>）</p>
-        <p>   曲绘数据来源：落雪查分器（<a href="https://maimai.lxns.net" target="_blank">https://maimai.lxns.net</a>）</p>
-        <p>   别名数据来源：Yuri-YuzuChaN（<a href="https://github.com/Yuri-YuzuChaN/maimaiDX" target="_blank">https://github.com/Yuri-YuzuChaN/maimaiDX</a>）</p>
-        <button id="close-about">关闭</button>
+    <div id="about-modal" class="modal">
+        <div class="modal-header">
+            <h2>关于</h2>
+            <button id="close-about" class="close-btn">&times;</button>
+        </div>
+        <div class="modal-content">
+            <p>项目地址：<a href="https://github.com/Dale2003/maimaiinfo" target="_blank">https://github.com/Dale2003/maimaiinfo</a></p>
+            <h3>致谢：</h3>
+            <ul class="credits-list">
+                <li>谱面数据来源：<a href="https://www.diving-fish.com/maimaidx/prober/" target="_blank">水鱼查分器</a></li>
+                <li>曲绘数据来源：<a href="https://maimai.lxns.net" target="_blank">落雪查分器</a></li>
+                <li>别名数据来源：<a href="https://github.com/Yuri-YuzuChaN/maimaiDX" target="_blank">Yuri-YuzuChaN</a></li>
+            </ul>
+        </div>
     </div>
 
     <script src="static/js/main.js"></script>
