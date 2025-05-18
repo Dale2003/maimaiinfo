@@ -133,12 +133,6 @@ function setupEventListeners() {
     // 输入框事件
     guessIdInput.addEventListener('input', searchMatches);
     
-    // 关闭模态框按钮
-    document.getElementById('close-modal').addEventListener('click', () => {
-        infoModal.style.display = 'none';
-        modalOverlay.style.display = 'none';
-    });
-    
     // 关于按钮
     document.getElementById('about-button').addEventListener('click', () => {
         aboutModal.style.display = 'block';
@@ -156,6 +150,14 @@ function setupEventListeners() {
         infoModal.style.display = 'none';
         aboutModal.style.display = 'none';
         modalOverlay.style.display = 'none';
+    });
+    
+    // 使用事件委托处理关闭按钮点击，而不是直接绑定到可能不存在的元素
+    document.addEventListener('click', function(event) {
+        if (event.target && (event.target.id === 'close-modal' || event.target.id === 'close-modal-btn')) {
+            infoModal.style.display = 'none';
+            modalOverlay.style.display = 'none';
+        }
     });
 }
 
