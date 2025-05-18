@@ -1,13 +1,16 @@
 // 全局变量
-let songData = null;
-let isDataLoading = false;
+let musicInfo = {}; // 存储曲目信息
+let isDataLoading = false; // 数据加载状态
 
 // DOM元素
 const loadingOverlay = document.getElementById('loading-overlay');
-const loadingProgress = document.getElementById('loading-progress');
+const searchContainer = document.getElementById('search-container');
 const guessIdInput = document.getElementById('guess-id');
 const searchButton = document.getElementById('search-button');
 const searchResults = document.getElementById('search-results');
+const modalOverlay = document.getElementById('modal-overlay');
+const infoModal = document.getElementById('info-modal');
+const aboutModal = document.getElementById('about-modal');
 
 // 初始化
 document.addEventListener('DOMContentLoaded', () => {
@@ -34,15 +37,15 @@ async function loadDataWithCache() {
         
         // 如果缓存存在且不超过1天
         if (cachedData && cachedTimestamp && (currentTime - cachedTimestamp < 86400000)) {
-            songData = JSON.parse(cachedData);
+            musicInfo = JSON.parse(cachedData);
             console.log('Data loaded from cache');
-            loadingProgress.textContent = '从缓存加载数据成功！';
             
-            // 短暂延迟后隐藏加载界面
+            // 数据加载完成后显示搜索界面
             setTimeout(() => {
                 loadingOverlay.style.display = 'none';
+                searchContainer.style.display = 'block';
                 isDataLoading = false;
-            }, 1000);
+            }, 500);
             return;
         }
         
@@ -50,7 +53,7 @@ async function loadDataWithCache() {
         await loadDataFromNetwork();
     } catch (error) {
         console.error('Error loading data:', error);
-        loadingProgress.textContent = '加载失败，请刷新页面重试';
+        alert("加载数据失败，请刷新页面重试！");
     }
 }
 
@@ -59,6 +62,12 @@ async function loadDataFromNetwork() {
     try {
         // 使用fetch并添加进度指示
         const response = await fetch('static/all_data.json');
+        
+        // 检查响应是否成功
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        
         const contentLength = response.headers.get('Content-Length');
         const total = contentLength ? parseInt(contentLength, 10) : 0;
         let loaded = 0;
@@ -75,12 +84,13 @@ async function loadDataFromNetwork() {
             chunks.push(value);
             loaded += value.length;
             
-            // 更新加载进度
+            // 更新加载进度显示
+            const progressText = document.querySelector('#loading-overlay p:first-of-type');
             if (total > 0) {
                 const progress = Math.min(Math.round((loaded / total) * 100), 100);
-                loadingProgress.textContent = `正在加载数据 (${progress}%)`;
+                progressText.textContent = `加载中，请稍候...(${progress}%)`;
             } else {
-                loadingProgress.textContent = `正在加载数据 (${loaded} bytes)`;
+                progressText.textContent = `加载中，请稍候...(${loaded} bytes)`;
             }
         }
         
@@ -93,22 +103,24 @@ async function loadDataFromNetwork() {
         }
         
         const jsonString = new TextDecoder().decode(allChunks);
-        songData = JSON.parse(jsonString);
+        musicInfo = JSON.parse(jsonString);
         
         // 保存到本地缓存
         localStorage.setItem('maimai_song_data', jsonString);
         localStorage.setItem('maimai_data_timestamp', new Date().getTime().toString());
         
-        loadingProgress.textContent = '加载完成！';
+        // 更新加载完成提示
+        document.querySelector('#loading-overlay p:first-of-type').textContent = '加载完成！';
         
-        // 短暂延迟后隐藏加载界面
+        // 短暂延迟后隐藏加载界面并显示搜索界面
         setTimeout(() => {
             loadingOverlay.style.display = 'none';
+            searchContainer.style.display = 'block';
             isDataLoading = false;
-        }, 1000);
+        }, 500);
     } catch (error) {
         console.error('Error loading data from network:', error);
-        loadingProgress.textContent = '加载失败，请刷新页面重试';
+        alert("加载数据失败，请刷新页面重试！");
         isDataLoading = false;
     }
 }
@@ -116,29 +128,34 @@ async function loadDataFromNetwork() {
 // 设置事件监听器
 function setupEventListeners() {
     // 搜索按钮点击
-    searchButton.addEventListener('click', () => {
-        const id = guessIdInput.value.trim();
-        if (id) {
-            displaySongInfo(id);
-        }
-    });
+    searchButton.addEventListener('click', displaySongInfo);
+    
+    // 输入框事件
+    guessIdInput.addEventListener('input', searchMatches);
     
     // 关闭模态框按钮
     document.getElementById('close-modal').addEventListener('click', () => {
-        document.getElementById('info-modal').style.display = 'none';
-        document.getElementById('modal-overlay').style.display = 'none';
+        infoModal.style.display = 'none';
+        modalOverlay.style.display = 'none';
     });
     
     // 关于按钮
     document.getElementById('about-button').addEventListener('click', () => {
-        document.getElementById('about-modal').style.display = 'block';
-        document.getElementById('modal-overlay').style.display = 'flex';
+        aboutModal.style.display = 'block';
+        modalOverlay.style.display = 'flex';
     });
     
     // 关闭关于模态框
     document.getElementById('close-about').addEventListener('click', () => {
-        document.getElementById('about-modal').style.display = 'none';
-        document.getElementById('modal-overlay').style.display = 'none';
+        aboutModal.style.display = 'none';
+        modalOverlay.style.display = 'none';
+    });
+    
+    // 点击遮罩层关闭模态框
+    modalOverlay.addEventListener('click', () => {
+        infoModal.style.display = 'none';
+        aboutModal.style.display = 'none';
+        modalOverlay.style.display = 'none';
     });
 }
 
@@ -149,34 +166,119 @@ function searchMatches() {
     // 清空结果区域
     searchResults.innerHTML = '';
     
-    if (!input || !songData) return;
+    if (!input || !musicInfo) {
+        searchResults.style.display = 'none';
+        return;
+    }
     
-    // 进行搜索匹配（实现取决于你的原有代码和数据结构）
-    // 这里是示例实现，你需要根据你的数据结构调整
-    const matches = Object.values(songData).filter(song => {
-        return song.title.toLowerCase().includes(input) || 
-               (song.id && song.id.toLowerCase().includes(input)) ||
-               (song.aliases && song.aliases.some(alias => alias.toLowerCase().includes(input)));
-    }).slice(0, 10); // 限制结果数量
+    // 进行搜索匹配
+    const matches = Object.keys(musicInfo)
+        .filter(key => {
+            const music = musicInfo[key];
+            const aliases = music.alias || [];
+            return (
+                key.toLowerCase().includes(input) ||
+                music.title.toLowerCase().includes(input) ||
+                aliases.some(alias => alias.toLowerCase().includes(input))
+            );
+        })
+        .slice(0, 10); // 限制结果数量
     
     // 显示匹配结果
-    matches.forEach(song => {
-        const div = document.createElement('div');
-        div.className = 'search-result-item';
-        div.textContent = `${song.title} (ID: ${song.id})`;
-        div.onclick = () => {
-            guessIdInput.value = song.id;
-            searchResults.innerHTML = '';
-        };
-        searchResults.appendChild(div);
-    });
+    if (matches.length > 0) {
+        matches.forEach(key => {
+            const music = musicInfo[key];
+            const div = document.createElement('div');
+            div.style.padding = '5px';
+            div.style.cursor = 'pointer';
+            div.textContent = `${music.title} (ID: ${key})`;
+            div.onclick = () => selectMatch(key);
+            searchResults.appendChild(div);
+        });
+        searchResults.style.display = 'block';
+    } else {
+        searchResults.style.display = 'none';
+    }
 }
 
-// 显示歌曲信息（你的原有函数）
-function displaySongInfo(id) {
-    // 实现取决于你的原有代码
-    // ...
+// 选择匹配结果
+function selectMatch(id) {
+    guessIdInput.value = id;
+    searchResults.style.display = 'none';
 }
 
-// 其他你原有的函数
-// ...
+// 显示歌曲信息
+function displaySongInfo() {
+    const input = guessIdInput.value.trim().toLowerCase();
+    
+    if (!input) {
+        alert("请输入曲目 ID");
+        return;
+    }
+
+    let music = musicInfo[input];
+    if (!music) {
+        alert("未找到相关曲目！");
+        return;
+    }
+
+    // 清空模态框内容
+    const modalContent = document.getElementById("modal-content");
+    modalContent.innerHTML = "";
+    guessIdInput.value = "";
+
+    // 显示模态框
+    document.getElementById("modal-title").textContent = music.title;
+    modalContent.innerHTML = `
+        <p>ID:${music.id} &emsp; &emsp; 类型: ${music.type}</p>
+        <p>等级: ${music.level.join(", ")}</p>
+        <p>定数: ${music.ds.join(", ")}</p>
+        <p>
+            ${music.fit_diff && Array.isArray(music.fit_diff) && music.fit_diff.length > 0 
+                ? `拟合定数: ${music.fit_diff.map(diff => `${diff.toFixed(2)}`).join(", ")}`
+                : ""}
+        </p>
+        <p>艺术家: ${music.basic_info.artist} &emsp; &emsp; 流派: ${music.basic_info.genre}</p>
+        <p>版本: ${music.basic_info.from} &emsp; &emsp; BPM: ${music.basic_info.bpm}</p>
+        <p>别名: ${music.alias ? music.alias.join(", ") : "无"}</p>
+    `;
+    
+    // 设置谱面信息表格
+    const cid_to_level = ['Basic', 'Advanced', 'Expert', 'Master', 'Re:Master'];
+    document.getElementById("img-chart").innerHTML = `
+        <div style="display: flex; margin-top: 20px;">
+            <div style="flex: 1; text-align: center;">
+                <img id="modal-image" src="https://assets2.lxns.net/maimai/jacket/${music.id % 10000}.png" width="100%" height="100%" max-width="200px" max-height="200px">
+            </div>
+            <div style="flex: 2; padding-left: 20px;">
+                <table border="1" style="width: 100%; border-collapse: collapse; text-align: center;">
+                    <thead>
+                        <tr>
+                            <th>难度</th>
+                            <th>音符</th>
+                            <th>物量</th>
+                            <th>谱师</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${music.charts.map((chart, index) => `
+                            <tr>
+                                <td>${cid_to_level[index]}</td>
+                                <td>${chart.notes.join("/")}</td>
+                                <td>${chart.notes.reduce((a, b) => a + b, 0)}</td>
+                                <td>${chart.charter}</td>
+                            </tr>
+                        `).join("")}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+    
+    // 确保内容滚动到顶部
+    modalContent.scrollTop = 0;
+    
+    // 显示模态框
+    modalOverlay.style.display = "block";
+    infoModal.style.display = "block";
+}
