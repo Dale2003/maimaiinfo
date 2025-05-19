@@ -240,14 +240,38 @@ input[type="text"]:focus {
 .close-btn {
   background: none;
   border: none;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   cursor: pointer;
-  color: #777;
+  color: #666;
   transition: var(--transition);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  position: relative;
 }
 
 .close-btn:hover {
   color: var(--primary-color);
+  background-color: rgba(255, 94, 163, 0.1);
+}
+
+.close-btn::after {
+  content: "关闭";
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.7rem;
+  color: #666;
+  opacity: 0;
+  transition: var(--transition);
+}
+
+.close-btn:hover::after {
+  opacity: 1;
 }
 
 .chart-container {
@@ -550,8 +574,8 @@ footer {
   }
   
   .difficulty-badge {
-    padding: 3px 6px;
-    font-size: 0.75rem;
+    padding: 4px 8px;
+    font-size: 0.8rem;
   }
   
   .chart-info-container {
@@ -565,8 +589,8 @@ footer {
   
   .chart-info-table th,
   .chart-info-table td {
-    padding: 4px 2px;
-    font-size: 0.7rem;
+    padding: 6px 3px;
+    font-size: 0.75rem;
   }
   
   /* 调整列宽比例 */
@@ -588,6 +612,17 @@ footer {
   .chart-info-table th:nth-child(4),
   .chart-info-table td:nth-child(4) {
     width: 35%;
+  }
+  
+  .song-info-card {
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .song-info-card h3 {
+    font-size: 1rem;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
   }
 }
 
@@ -613,4 +648,31 @@ footer {
     font-size: 1rem;
     color: var(--text-color);
     font-weight: 500;
+}
+
+/* 歌曲信息卡片样式 */
+.song-info-card {
+    background: #fff;
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    border: 1px solid #eee;
+}
+
+.song-info-card:last-child {
+    margin-bottom: 0;
+}
+
+.song-info-card h3 {
+    color: var(--primary-color);
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--primary-light);
+}
+
+/* 移除底部关闭按钮 */
+.modal-footer {
+    display: none;
 }
