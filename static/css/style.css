@@ -341,13 +341,12 @@ footer {
 
 /* 表格容器 */
 .chart-info-container {
-  overflow-x: auto;
-  max-width: 100%;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .chart-info-table {
   width: 100%;
-  min-width: 400px;
   border-collapse: separate;
   border-spacing: 0;
   margin-top: 15px;
@@ -357,96 +356,75 @@ footer {
   background-color: var(--primary-light);
   color: var(--primary-color);
   font-weight: 600;
-  padding: 12px;
+  padding: 12px 8px;
   text-align: center;
+  font-size: 0.9rem;
 }
 
 .chart-info-table td {
-  padding: 10px;
+  padding: 10px 8px;
   border: 1px solid #eee;
   text-align: center;
+  font-size: 0.9rem;
 }
 
 /* 难度行样式 */
 .chart-info-table tr.basic-row {
-  background-color: rgba(76, 175, 80, 0.1);
+  background-color: rgba(76, 175, 80, 0.15);
+}
+
+.chart-info-table tr.basic-row td:first-child {
+  background-color: #4CAF50;
+  color: white;
+  font-weight: 500;
 }
 
 .chart-info-table tr.advanced-row {
-  background-color: rgba(255, 193, 7, 0.1);
+  background-color: rgba(255, 193, 7, 0.15);
+}
+
+.chart-info-table tr.advanced-row td:first-child {
+  background-color: #FFC107;
+  color: #333;
+  font-weight: 500;
 }
 
 .chart-info-table tr.expert-row {
-  background-color: rgba(244, 67, 54, 0.1);
+  background-color: rgba(244, 67, 54, 0.15);
+}
+
+.chart-info-table tr.expert-row td:first-child {
+  background-color: #F44336;
+  color: white;
+  font-weight: 500;
 }
 
 .chart-info-table tr.master-row {
-  background-color: rgba(156, 39, 176, 0.1);
+  background-color: rgba(156, 39, 176, 0.15);
+}
+
+.chart-info-table tr.master-row td:first-child {
+  background-color: #9C27B0;
+  color: white;
+  font-weight: 500;
 }
 
 .chart-info-table tr.remaster-row {
-  background-color: rgba(156, 39, 176, 0.05);
+  background-color: rgba(156, 39, 176, 0.08);
+}
+
+.chart-info-table tr.remaster-row td:first-child {
+  background-color: #FFFFFF;
+  color: #9C27B0;
+  border: 1px solid #9C27B0;
+  font-weight: 500;
 }
 
 .chart-info-table tr:hover {
   background-color: rgba(0, 0, 0, 0.05);
 }
 
-/* 模态框底部按钮区域 */
-.modal-footer {
-  padding: 15px;
-  text-align: center;
-  border-top: 1px solid #eee;
-}
-
-/* 曲目信息卡片样式 */
-.song-info-card {
-  background: #fff;
-  border-radius: var(--radius);
-  padding: 20px;
-  margin-bottom: 15px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.song-info-card h3 {
-  color: var(--primary-color);
-  font-size: 1.1rem;
-  margin-bottom: 12px;
-  padding-bottom: 8px;
-  border-bottom: 2px solid var(--primary-light);
-}
-
-.song-info-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-}
-
-.info-item {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.info-label {
-  font-size: 0.9rem;
-  color: #666;
-}
-
-.info-value {
-  font-size: 1rem;
-  color: var(--text-color);
-  font-weight: 500;
-}
-
-/* 难度信息样式 */
-.difficulty-info {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 10px;
-}
-
+/* 难度标签颜色 */
 .difficulty-badge {
   padding: 6px 12px;
   border-radius: 20px;
@@ -479,13 +457,9 @@ footer {
   border: 1px solid #9C27B0;
 }
 
-/* 拟合定数样式 */
+/* 移除拟合定数样式，因为现在集成到难度标签中 */
 .fit-diff-info {
-  margin-top: 10px;
-  padding: 8px 12px;
-  background: #f5f5f5;
-  border-radius: var(--radius);
-  font-size: 0.9rem;
+  display: none;
 }
 
 /* 别名标签样式 */
@@ -523,5 +497,11 @@ footer {
 @media (max-width: 480px) {
   .song-info-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .chart-info-table th,
+  .chart-info-table td {
+    padding: 8px 4px;
+    font-size: 0.85rem;
   }
 }

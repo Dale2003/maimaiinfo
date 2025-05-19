@@ -286,19 +286,16 @@ function displaySongInfo() {
                 <div class="difficulty-info">
                     ${music.level.map((level, index) => {
                         const difficultyClass = ['basic', 'advanced', 'expert', 'master', 'remaster'][index];
+                        const fitDiff = music.fit_diff && music.fit_diff[index] ? 
+                            ` (拟合: ${music.fit_diff[index].toFixed(2)})` : '';
                         return `
                             <div class="difficulty-badge ${difficultyClass}">
                                 ${['Basic', 'Advanced', 'Expert', 'Master', 'Re:Master'][index]}: ${level}
-                                (${music.ds[index]})
+                                (${music.ds[index]}${fitDiff})
                             </div>
                         `;
                     }).join('')}
                 </div>
-                ${music.fit_diff && Array.isArray(music.fit_diff) && music.fit_diff.length > 0 ? `
-                    <div class="fit-diff-info">
-                        拟合定数: ${music.fit_diff.map(diff => diff.toFixed(2)).join(", ")}
-                    </div>
-                ` : ''}
             </div>
 
             <div class="song-info-card">
