@@ -314,14 +314,18 @@ function displaySongInfo() {
                             </tr>
                         </thead>
                         <tbody>
-                            ${music.charts.map((chart, index) => `
-                                <tr>
-                                    <td>${['Basic', 'Advanced', 'Expert', 'Master', 'Re:Master'][index]}</td>
-                                    <td>${chart.notes.join("/")}</td>
-                                    <td>${chart.notes.reduce((a, b) => a + b, 0)}</td>
-                                    <td>${chart.charter}</td>
-                                </tr>
-                            `).join("")}
+                            ${music.charts.map((chart, index) => {
+                                const difficultyClass = ['basic', 'advanced', 'expert', 'master', 'remaster'][index];
+                                const difficultyShort = ['BAS', 'ADV', 'EXP', 'MAS', 'REM'][index];
+                                return `
+                                    <tr class="${difficultyClass}-row">
+                                        <td>${difficultyShort}</td>
+                                        <td>${chart.notes.join("/")}</td>
+                                        <td>${chart.notes.reduce((a, b) => a + b, 0)}</td>
+                                        <td>${chart.charter}</td>
+                                    </tr>
+                                `;
+                            }).join("")}
                         </tbody>
                     </table>
                 </div>
