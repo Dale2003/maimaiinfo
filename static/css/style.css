@@ -339,7 +339,24 @@ footer {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* 表格容器 */
+/* 难度信息样式 */
+.difficulty-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.difficulty-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: white;
+  white-space: nowrap;
+}
+
+/* 表格样式优化 */
 .chart-info-container {
   width: 100%;
   margin: 0 auto;
@@ -362,7 +379,6 @@ footer {
   padding: 8px 4px;
   text-align: center;
   font-size: 0.85rem;
-  white-space: nowrap;
 }
 
 .chart-info-table td {
@@ -370,28 +386,31 @@ footer {
   border: 1px solid #eee;
   text-align: center;
   font-size: 0.85rem;
-  white-space: nowrap;
 }
 
 /* 设置列宽 */
 .chart-info-table th:nth-child(1),
 .chart-info-table td:nth-child(1) {
-  width: 15%;
+  width: 12%;
 }
 
 .chart-info-table th:nth-child(2),
 .chart-info-table td:nth-child(2) {
-  width: 25%;
+  width: 35%;
+  white-space: normal;
+  word-break: break-all;
 }
 
 .chart-info-table th:nth-child(3),
 .chart-info-table td:nth-child(3) {
-  width: 20%;
+  width: 18%;
 }
 
 .chart-info-table th:nth-child(4),
 .chart-info-table td:nth-child(4) {
-  width: 40%;
+  width: 35%;
+  white-space: normal;
+  word-break: break-all;
 }
 
 /* 难度行样式 */
@@ -451,14 +470,6 @@ footer {
 }
 
 /* 难度标签颜色 */
-.difficulty-badge {
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: white;
-}
-
 .difficulty-badge.basic {
   background: #4CAF50;
 }
@@ -538,6 +549,11 @@ footer {
     font-size: 0.8rem;
   }
   
+  .difficulty-badge {
+    padding: 3px 6px;
+    font-size: 0.75rem;
+  }
+  
   .chart-info-container {
     margin: 0 -20px;
     padding: 0 20px;
@@ -556,12 +572,12 @@ footer {
   /* 调整列宽比例 */
   .chart-info-table th:nth-child(1),
   .chart-info-table td:nth-child(1) {
-    width: 12%;
+    width: 10%;
   }
   
   .chart-info-table th:nth-child(2),
   .chart-info-table td:nth-child(2) {
-    width: 28%;
+    width: 35%;
   }
   
   .chart-info-table th:nth-child(3),
@@ -571,7 +587,7 @@ footer {
   
   .chart-info-table th:nth-child(4),
   .chart-info-table td:nth-child(4) {
-    width: 40%;
+    width: 35%;
   }
 }
 
@@ -597,169 +613,4 @@ footer {
     font-size: 1rem;
     color: var(--text-color);
     font-weight: 500;
-}
-
-/* 表格样式优化 */
-.chart-info-container {
-    width: 100%;
-    margin: 0 auto;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-}
-
-.chart-info-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    margin-top: 15px;
-    table-layout: fixed;
-}
-
-.chart-info-table th {
-    background-color: var(--primary-light);
-    color: var(--primary-color);
-    font-weight: 600;
-    padding: 8px 4px;
-    text-align: center;
-    font-size: 0.85rem;
-    white-space: nowrap;
-}
-
-.chart-info-table td {
-    padding: 8px 4px;
-    border: 1px solid #eee;
-    text-align: center;
-    font-size: 0.85rem;
-    white-space: nowrap;
-}
-
-/* 设置列宽 */
-.chart-info-table th:nth-child(1),
-.chart-info-table td:nth-child(1) {
-    width: 15%;
-}
-
-.chart-info-table th:nth-child(2),
-.chart-info-table td:nth-child(2) {
-    width: 25%;
-}
-
-.chart-info-table th:nth-child(3),
-.chart-info-table td:nth-child(3) {
-    width: 20%;
-}
-
-.chart-info-table th:nth-child(4),
-.chart-info-table td:nth-child(4) {
-    width: 40%;
-}
-
-/* 难度行样式 */
-.chart-info-table tr.basic-row {
-    background-color: rgba(76, 175, 80, 0.15);
-}
-
-.chart-info-table tr.basic-row td:first-child {
-    background-color: #4CAF50;
-    color: white;
-    font-weight: 500;
-}
-
-.chart-info-table tr.advanced-row {
-    background-color: rgba(255, 193, 7, 0.15);
-}
-
-.chart-info-table tr.advanced-row td:first-child {
-    background-color: #FFC107;
-    color: #333;
-    font-weight: 500;
-}
-
-.chart-info-table tr.expert-row {
-    background-color: rgba(244, 67, 54, 0.15);
-}
-
-.chart-info-table tr.expert-row td:first-child {
-    background-color: #F44336;
-    color: white;
-    font-weight: 500;
-}
-
-.chart-info-table tr.master-row {
-    background-color: rgba(156, 39, 176, 0.15);
-}
-
-.chart-info-table tr.master-row td:first-child {
-    background-color: #9C27B0;
-    color: white;
-    font-weight: 500;
-}
-
-.chart-info-table tr.remaster-row {
-    background-color: rgba(156, 39, 176, 0.08);
-}
-
-.chart-info-table tr.remaster-row td:first-child {
-    background-color: #FFFFFF;
-    color: #9C27B0;
-    border: 1px solid #9C27B0;
-    font-weight: 500;
-}
-
-.chart-info-table tr:hover {
-    background-color: rgba(0, 0, 0, 0.05);
-}
-
-/* 难度标签颜色 */
-.difficulty-badge {
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: white;
-}
-
-.difficulty-badge.basic {
-    background: #4CAF50;
-}
-
-.difficulty-badge.advanced {
-    background: #FFC107;
-    color: #333;
-}
-
-.difficulty-badge.expert {
-    background: #F44336;
-}
-
-.difficulty-badge.master {
-    background: #9C27B0;
-    opacity: 0.85;
-}
-
-.difficulty-badge.remaster {
-    background: #FFFFFF;
-    color: #9C27B0;
-    border: 1px solid #9C27B0;
-}
-
-/* 移除拟合定数样式，因为现在集成到难度标签中 */
-.fit-diff-info {
-    display: none;
-}
-
-/* 别名标签样式 */
-.alias-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 8px;
-}
-
-.alias-tag {
-    background: #f0f0f0;
-    padding: 4px 10px;
-    border-radius: 15px;
-    font-size: 0.9rem;
-    color: #666;
 }

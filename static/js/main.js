@@ -19,51 +19,21 @@ document.addEventListener('DOMContentLoaded', () => {
     if (modalOverlay) modalOverlay.style.display = 'none';
     if (aboutModal) aboutModal.style.display = 'none';
     
-    // 尝试从缓存加载数据
-    loadDataWithCache();
+    // 直接从网络加载数据
+    loadDataFromNetwork();
     
     // 事件监听器
     setupEventListeners();
 });
 
-// 使用缓存并显示加载进度
-async function loadDataWithCache() {
+// 从网络加载数据并显示进度
+async function loadDataFromNetwork() {
     if (isDataLoading) return;
     isDataLoading = true;
     
     // 显示加载界面
     loadingOverlay.style.display = 'flex';
     
-    try {
-        // 检查本地缓存
-        const cachedData = localStorage.getItem('maimai_song_data');
-        const cachedTimestamp = localStorage.getItem('maimai_data_timestamp');
-        const currentTime = new Date().getTime();
-        
-        // 如果缓存存在且不超过1天
-        if (cachedData && cachedTimestamp && (currentTime - cachedTimestamp < 86400000)) {
-            musicInfo = JSON.parse(cachedData);
-            console.log('Data loaded from cache');
-            
-            // 数据加载完成后显示搜索界面
-            setTimeout(() => {
-                loadingOverlay.style.display = 'none';
-                searchContainer.style.display = 'block';
-                isDataLoading = false;
-            }, 500);
-            return;
-        }
-        
-        // 如果无缓存或缓存过期，则从网络加载
-        await loadDataFromNetwork();
-    } catch (error) {
-        console.error('Error loading data:', error);
-        alert("加载数据失败，请刷新页面重试！");
-    }
-}
-
-// 从网络加载数据并显示进度
-async function loadDataFromNetwork() {
     try {
         // 使用fetch并添加进度指示
         const response = await fetch('static/all_data.json');
@@ -90,12 +60,12 @@ async function loadDataFromNetwork() {
             loaded += value.length;
             
             // 更新加载进度显示
-            const progressText = document.querySelector('#loading-overlay p:first-of-type');
+            const progressText = document.querySelector('#loading-progress');
             if (total > 0) {
                 const progress = Math.min(Math.round((loaded / total) * 100), 100);
-                progressText.textContent = `加载中，请稍候...(${progress}%)`;
+                progressText.textContent = `正在加载数据 (${progress}%)`;
             } else {
-                progressText.textContent = `加载中，请稍候...(${loaded} bytes)`;
+                progressText.textContent = `正在加载数据 (${loaded} bytes)`;
             }
         }
         
@@ -110,12 +80,8 @@ async function loadDataFromNetwork() {
         const jsonString = new TextDecoder().decode(allChunks);
         musicInfo = JSON.parse(jsonString);
         
-        // 保存到本地缓存
-        localStorage.setItem('maimai_song_data', jsonString);
-        localStorage.setItem('maimai_data_timestamp', new Date().getTime().toString());
-        
         // 更新加载完成提示
-        document.querySelector('#loading-overlay p:first-of-type').textContent = '加载完成！';
+        document.querySelector('#loading-progress').textContent = '加载完成！';
         
         // 短暂延迟后隐藏加载界面并显示搜索界面
         setTimeout(() => {
