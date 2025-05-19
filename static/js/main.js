@@ -241,76 +241,107 @@ function displaySongInfo() {
     // 设置标题
     document.getElementById("modal-title").textContent = music.title;
     
-    // 构建上部分：基本信息
-    const modalContent = document.getElementById("modal-content");
-    
-    // 确保模态框内部结构正确（如果需要重建）
+    // 构建模态框内容
     infoModal.innerHTML = `
         <div class="modal-header">
             <h2 id="modal-title">${music.title}</h2>
             <button id="close-modal" class="close-btn">&times;</button>
         </div>
-        <div class="info-top-section" id="modal-content"></div>
-        <div class="info-bottom-section" id="img-chart"></div>
+        <div class="modal-content">
+            <div class="song-info-card">
+                <h3>基本信息</h3>
+                <div class="song-info-grid">
+                    <div class="info-item">
+                        <span class="info-label">曲目ID</span>
+                        <span class="info-value">${music.id}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">类型</span>
+                        <span class="info-value">${music.type}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">艺术家</span>
+                        <span class="info-value">${music.basic_info.artist}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">流派</span>
+                        <span class="info-value">${music.basic_info.genre}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">版本</span>
+                        <span class="info-value">${music.basic_info.from}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">BPM</span>
+                        <span class="info-value">${music.basic_info.bpm}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="song-info-card">
+                <h3>难度信息</h3>
+                <div class="difficulty-info">
+                    ${music.level.map((level, index) => `
+                        <div class="difficulty-badge">
+                            ${['Basic', 'Advanced', 'Expert', 'Master', 'Re:Master'][index]}: ${level}
+                            (${music.ds[index]})
+                        </div>
+                    `).join('')}
+                </div>
+                ${music.fit_diff && Array.isArray(music.fit_diff) && music.fit_diff.length > 0 ? `
+                    <div class="info-item" style="margin-top: 15px;">
+                        <span class="info-label">拟合定数</span>
+                        <span class="info-value">${music.fit_diff.map(diff => diff.toFixed(2)).join(", ")}</span>
+                    </div>
+                ` : ''}
+            </div>
+
+            ${music.alias && music.alias.length > 0 ? `
+                <div class="song-info-card">
+                    <h3>别名</h3>
+                    <div class="alias-tags">
+                        ${music.alias.map(alias => `
+                            <span class="alias-tag">${alias}</span>
+                        `).join('')}
+                    </div>
+                </div>
+            ` : ''}
+
+            <div class="song-info-card">
+                <h3>谱面信息</h3>
+                <div class="song-info-display">
+                    <div class="cover-container">
+                        <img src="https://assets2.lxns.net/maimai/jacket/${music.id % 10000}.png" alt="${music.title}">
+                    </div>
+                    <div class="chart-info-container">
+                        <table class="chart-info-table">
+                            <thead>
+                                <tr>
+                                    <th>难度</th>
+                                    <th>音符</th>
+                                    <th>物量</th>
+                                    <th>谱师</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${music.charts.map((chart, index) => `
+                                    <tr>
+                                        <td>${['Basic', 'Advanced', 'Expert', 'Master', 'Re:Master'][index]}</td>
+                                        <td>${chart.notes.join("/")}</td>
+                                        <td>${chart.notes.reduce((a, b) => a + b, 0)}</td>
+                                        <td>${chart.charter}</td>
+                                    </tr>
+                                `).join("")}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="modal-footer">
-            <button id="close-modal-btn" class="btn">关闭</button>
+            <button id="close-modal-btn" class="btn btn-primary">关闭</button>
         </div>
     `;
-    
-    // 重新获取内容区域元素（因为可能刚刚重建了DOM）
-    const contentSection = document.getElementById("modal-content");
-    const imgChartSection = document.getElementById("img-chart");
-    
-    // 填充基本信息
-    contentSection.innerHTML = `
-        <p>ID:${music.id} &emsp; &emsp; 类型: ${music.type}</p>
-        <p>等级: ${music.level.join(", ")}</p>
-        <p>定数: ${music.ds.join(", ")}</p>
-        <p>
-            ${music.fit_diff && Array.isArray(music.fit_diff) && music.fit_diff.length > 0 
-                ? `拟合定数: ${music.fit_diff.map(diff => `${diff.toFixed(2)}`).join(", ")}`
-                : ""}
-        </p>
-        <p>艺术家: ${music.basic_info.artist} &emsp; &emsp; 流派: ${music.basic_info.genre}</p>
-        <p>版本: ${music.basic_info.from} &emsp; &emsp; BPM: ${music.basic_info.bpm}</p>
-        <p>别名: ${music.alias ? music.alias.join(", ") : "无"}</p>
-    `;
-    
-    // 填充下部分：封面和表格
-    const cid_to_level = ['Basic', 'Advanced', 'Expert', 'Master', 'Re:Master'];
-    imgChartSection.innerHTML = `
-        <div class="song-info-display">
-            <div class="cover-container">
-                <img src="https://assets2.lxns.net/maimai/jacket/${music.id % 10000}.png" alt="${music.title}">
-            </div>
-            <div class="chart-info-container">
-                <table class="chart-info-table">
-                    <thead>
-                        <tr>
-                            <th>难度</th>
-                            <th>音符</th>
-                            <th>物量</th>
-                            <th>谱师</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${music.charts.map((chart, index) => `
-                            <tr>
-                                <td>${cid_to_level[index]}</td>
-                                <td>${chart.notes.join("/")}</td>
-                                <td>${chart.notes.reduce((a, b) => a + b, 0)}</td>
-                                <td>${chart.charter}</td>
-                            </tr>
-                        `).join("")}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    `;
-    
-    // 确保内容滚动到顶部
-    contentSection.scrollTop = 0;
-    imgChartSection.scrollTop = 0;
     
     // 添加关闭按钮事件监听
     document.querySelectorAll('#close-modal, #close-modal-btn').forEach(button => {
