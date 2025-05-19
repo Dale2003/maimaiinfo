@@ -250,6 +250,9 @@ function displaySongInfo() {
         <div class="modal-content">
             <div class="song-info-card">
                 <h3>基本信息</h3>
+                <div class="cover-container">
+                    <img src="https://assets2.lxns.net/maimai/jacket/${music.id % 10000}.png" alt="${music.title}">
+                </div>
                 <div class="song-info-grid">
                     <div class="info-item">
                         <span class="info-label">曲目ID</span>
@@ -281,19 +284,47 @@ function displaySongInfo() {
             <div class="song-info-card">
                 <h3>难度信息</h3>
                 <div class="difficulty-info">
-                    ${music.level.map((level, index) => `
-                        <div class="difficulty-badge">
-                            ${['Basic', 'Advanced', 'Expert', 'Master', 'Re:Master'][index]}: ${level}
-                            (${music.ds[index]})
-                        </div>
-                    `).join('')}
+                    ${music.level.map((level, index) => {
+                        const difficultyClass = ['basic', 'advanced', 'expert', 'master', 'remaster'][index];
+                        return `
+                            <div class="difficulty-badge ${difficultyClass}">
+                                ${['Basic', 'Advanced', 'Expert', 'Master', 'Re:Master'][index]}: ${level}
+                                (${music.ds[index]})
+                            </div>
+                        `;
+                    }).join('')}
                 </div>
                 ${music.fit_diff && Array.isArray(music.fit_diff) && music.fit_diff.length > 0 ? `
-                    <div class="info-item" style="margin-top: 15px;">
-                        <span class="info-label">拟合定数</span>
-                        <span class="info-value">${music.fit_diff.map(diff => diff.toFixed(2)).join(", ")}</span>
+                    <div class="fit-diff-info">
+                        拟合定数: ${music.fit_diff.map(diff => diff.toFixed(2)).join(", ")}
                     </div>
                 ` : ''}
+            </div>
+
+            <div class="song-info-card">
+                <h3>谱面信息</h3>
+                <div class="chart-info-container">
+                    <table class="chart-info-table">
+                        <thead>
+                            <tr>
+                                <th>难度</th>
+                                <th>音符</th>
+                                <th>物量</th>
+                                <th>谱师</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${music.charts.map((chart, index) => `
+                                <tr>
+                                    <td>${['Basic', 'Advanced', 'Expert', 'Master', 'Re:Master'][index]}</td>
+                                    <td>${chart.notes.join("/")}</td>
+                                    <td>${chart.notes.reduce((a, b) => a + b, 0)}</td>
+                                    <td>${chart.charter}</td>
+                                </tr>
+                            `).join("")}
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             ${music.alias && music.alias.length > 0 ? `
@@ -306,37 +337,6 @@ function displaySongInfo() {
                     </div>
                 </div>
             ` : ''}
-
-            <div class="song-info-card">
-                <h3>谱面信息</h3>
-                <div class="song-info-display">
-                    <div class="cover-container">
-                        <img src="https://assets2.lxns.net/maimai/jacket/${music.id % 10000}.png" alt="${music.title}">
-                    </div>
-                    <div class="chart-info-container">
-                        <table class="chart-info-table">
-                            <thead>
-                                <tr>
-                                    <th>难度</th>
-                                    <th>音符</th>
-                                    <th>物量</th>
-                                    <th>谱师</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${music.charts.map((chart, index) => `
-                                    <tr>
-                                        <td>${['Basic', 'Advanced', 'Expert', 'Master', 'Re:Master'][index]}</td>
-                                        <td>${chart.notes.join("/")}</td>
-                                        <td>${chart.notes.reduce((a, b) => a + b, 0)}</td>
-                                        <td>${chart.charter}</td>
-                                    </tr>
-                                `).join("")}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
         </div>
         <div class="modal-footer">
             <button id="close-modal-btn" class="btn btn-primary">关闭</button>
