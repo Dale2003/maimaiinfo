@@ -152,15 +152,23 @@ function searchMatches() {
             let score = 0;
             
             // 计算匹配分数
-            if (key.toLowerCase().includes(input)) {
-                score += 100; // ID完全匹配得分最高
+            if (key.toLowerCase() === input) {
+                score += 150; // ID完全一致得分最高
+            } else if (key.toLowerCase().includes(input)) {
+                score += 100; // ID部分匹配
             }
-            if (music.title.toLowerCase().includes(input)) {
-                score += 80; // 标题匹配次之
+            
+            if (music.title.toLowerCase() === input) {
+                score += 120; // 标题完全一致
+            } else if (music.title.toLowerCase().includes(input)) {
+                score += 80; // 标题部分匹配
             }
+            
             aliases.forEach(alias => {
-                if (alias.toLowerCase().includes(input)) {
-                    score += 60; // 别名匹配再次之
+                if (alias.toLowerCase() === input) {
+                    score += 120; // 别名完全一致
+                } else if (alias.toLowerCase().includes(input)) {
+                    score += 60; // 别名部分匹配
                 }
             });
             

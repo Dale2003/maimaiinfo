@@ -627,7 +627,7 @@ footer {
 /* 基本信息网格布局优化 */
 .song-info-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 12px;
 }
 
@@ -700,9 +700,9 @@ footer {
         grid-row: 1;
     }
 
-    /* 谱面信息卡片占据下方 */
+    /* 谱面信息卡片占据右侧下方 */
     .song-info-card:nth-child(3) {
-        grid-column: 1 / -1;
+        grid-column: 2;
         grid-row: 2;
     }
 
@@ -714,8 +714,8 @@ footer {
 
     /* 调整封面大小 */
     .cover-container img {
-        max-width: 300px;
-        max-height: 300px;
+        max-width: 200px;
+        max-height: 200px;
     }
 
     /* 优化表格显示 */
@@ -726,5 +726,23 @@ footer {
 
     .chart-info-table {
         margin-top: 0;
+    }
+
+    /* 调整基本信息布局 */
+    .song-info-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+    }
+
+    .info-item {
+        gap: 6px;
+    }
+
+    .info-label {
+        font-size: 0.9rem;
+    }
+
+    .info-value {
+        font-size: 1rem;
     }
 }
