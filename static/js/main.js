@@ -291,7 +291,7 @@ function displaySongInfo() {
                         return `
                             <div class="difficulty-badge ${difficultyClass}">
                                 ${['Basic', 'Advanced', 'Expert', 'Master', 'Re:Master'][index]}: ${level}
-                                (${music.ds[index]}${fitDiff})
+                                (${music.ds[index]})${fitDiff}
                             </div>
                         `;
                     }).join('')}
