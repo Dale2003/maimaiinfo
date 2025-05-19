@@ -144,23 +144,34 @@ function searchMatches() {
         return;
     }
     
-    // 进行搜索匹配
+    // 进行搜索匹配并计算相关度
     const matches = Object.keys(musicInfo)
-        .filter(key => {
+        .map(key => {
             const music = musicInfo[key];
             const aliases = music.alias || [];
-            return (
-                key.toLowerCase().includes(input) ||
-                music.title.toLowerCase().includes(input) ||
-                aliases.some(alias => alias.toLowerCase().includes(input))
-            );
+            let score = 0;
+            
+            // 计算匹配分数
+            if (key.toLowerCase().includes(input)) {
+                score += 100; // ID完全匹配得分最高
+            }
+            if (music.title.toLowerCase().includes(input)) {
+                score += 80; // 标题匹配次之
+            }
+            aliases.forEach(alias => {
+                if (alias.toLowerCase().includes(input)) {
+                    score += 60; // 别名匹配再次之
+                }
+            });
+            
+            return { key, music, score };
         })
-        .slice(0, 10); // 限制结果数量
+        .filter(item => item.score > 0) // 只保留有匹配结果的
+        .sort((a, b) => b.score - a.score); // 按分数从高到低排序
     
     // 显示匹配结果
     if (matches.length > 0) {
-        matches.forEach(key => {
-            const music = musicInfo[key];
+        matches.forEach(({ key, music }) => {
             const div = document.createElement('div');
             div.style.padding = '5px';
             div.style.cursor = 'pointer';

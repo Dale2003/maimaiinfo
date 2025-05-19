@@ -174,26 +174,27 @@ input[type="text"]:focus {
 }
 
 .search-results {
-  max-height: 300px;
+  max-height: 60vh;
   overflow-y: auto;
   border-radius: var(--radius);
   background-color: #f5f5f5;
   margin-top: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .search-results:empty {
   display: none;
 }
 
-.search-result-item {
-  padding: 10px 15px;
+.search-results div {
+  padding: 8px 12px;
   border-bottom: 1px solid #eee;
-  cursor: pointer;
   transition: var(--transition);
 }
 
-.search-result-item:hover {
-  background-color: #f0f0f0;
+.search-results div:hover {
+  background-color: var(--primary-light);
+  color: white;
 }
 
 #modal-overlay {
@@ -217,8 +218,8 @@ input[type="text"]:focus {
   background-color: var(--card-bg);
   border-radius: var(--radius);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  width: 90%;
-  max-width: 600px;
+  width: 95%;
+  max-width: 1200px;
   max-height: 90vh;
   overflow-y: auto;
   z-index: 150;
@@ -354,8 +355,8 @@ footer {
 }
 
 .cover-container img {
-  max-width: 200px;
-  max-height: 200px;
+  max-width: 300px;
+  max-height: 300px;
   width: auto;
   height: auto;
   object-fit: contain;
@@ -383,7 +384,8 @@ footer {
 /* 表格样式优化 */
 .chart-info-container {
   width: 100%;
-  margin: 0 auto;
+  margin: 0;
+  padding: 0;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
@@ -392,7 +394,7 @@ footer {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  margin-top: 15px;
+  margin-top: 0;
   table-layout: fixed;
 }
 
@@ -671,4 +673,58 @@ footer {
 /* 移除底部关闭按钮 */
 .modal-footer {
     display: none;
+}
+
+/* 桌面端布局优化 */
+@media (min-width: 1024px) {
+    .modal-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        padding: 20px;
+    }
+
+    .song-info-card {
+        margin-bottom: 0;
+    }
+
+    /* 基本信息卡片占据左侧 */
+    .song-info-card:first-child {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    /* 难度信息卡片占据右侧 */
+    .song-info-card:nth-child(2) {
+        grid-column: 2;
+        grid-row: 1;
+    }
+
+    /* 谱面信息卡片占据下方 */
+    .song-info-card:nth-child(3) {
+        grid-column: 1 / -1;
+        grid-row: 2;
+    }
+
+    /* 别名信息卡片占据最下方 */
+    .song-info-card:nth-child(4) {
+        grid-column: 1 / -1;
+        grid-row: 3;
+    }
+
+    /* 调整封面大小 */
+    .cover-container img {
+        max-width: 300px;
+        max-height: 300px;
+    }
+
+    /* 优化表格显示 */
+    .chart-info-container {
+        margin: 0;
+        padding: 0;
+    }
+
+    .chart-info-table {
+        margin-top: 0;
+    }
 }
