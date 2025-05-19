@@ -267,7 +267,7 @@ function displaySongInfo() {
             </div>
 
             <div class="song-info-card">
-                <h3>难度信息</h3>
+                <h3>难度与谱面信息</h3>
                 <div class="difficulty-info">
                     ${music.level.map((level, index) => {
                         const difficultyClass = ['basic', 'advanced', 'expert', 'master', 'remaster'][index];
@@ -281,10 +281,6 @@ function displaySongInfo() {
                         `;
                     }).join('')}
                 </div>
-            </div>
-
-            <div class="song-info-card">
-                <h3>谱面信息</h3>
                 <div class="chart-info-container">
                     <table class="chart-info-table">
                         <thead>
