@@ -415,12 +415,12 @@ footer {
 /* 设置列宽 */
 .chart-info-table th:nth-child(1),
 .chart-info-table td:nth-child(1) {
-  width: 12%;
+  width: 18%;
 }
 
 .chart-info-table th:nth-child(2),
 .chart-info-table td:nth-child(2) {
-  width: 35%;
+  width: 45%;
   white-space: normal;
   word-break: break-all;
 }
