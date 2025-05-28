@@ -541,6 +541,73 @@ footer {
   color: #666;
 }
 
+/* 定数变化折线图样式 */
+.ds-change-chart-container {
+    width: 100%;
+    height: 400px;
+    padding: 10px;
+    margin-top: 15px;
+    border-radius: var(--radius);
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* 调整选项卡内容在活动时的样式 */
+.tab-content.active {
+    display: block;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* 使折线图在选项卡中全宽显示 */
+#ds-change.tab-content.active {
+    width: 100%;
+}
+
+/* 定数变化选项卡样式 */
+.song-tabs {
+    display: flex;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.tab-btn {
+    padding: 12px 20px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    color: #666;
+    transition: var(--transition);
+    font-weight: 500;
+    font-size: 1.1rem;  /* 增大字体大小 */
+}
+
+.tab-btn.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+}
+
+.tab-btn:hover:not(.active) {
+    color: var(--primary-light);
+    border-bottom-color: var(--primary-light);
+}
+
+.tab-content {
+    display: none;
+}
+
+.no-data {
+    text-align: center;
+    padding: 15px;
+    color: #999;
+    font-style: italic;
+}
+
 @media (max-width: 600px) {
   header {
     flex-direction: column;
@@ -554,6 +621,16 @@ footer {
   
   .btn {
     width: 100%;
+  }
+  
+  /* 修复手机端基本信息样式 */
+  #basic-info .modal-content {
+    display: block;
+  }
+  
+  .song-tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 }
 
@@ -738,5 +815,11 @@ footer {
 
     .info-value {
         font-size: 1rem;
+    }
+    
+    /* 桌面端调整定数变化展示 */
+    #ds-change .song-info-card {
+        grid-column: 1 / -1;
+        grid-row: 1;
     }
 }
