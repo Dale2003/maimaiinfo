@@ -1,6 +1,8 @@
 // 全局变量
 let musicInfo = {}; // 存储曲目信息
 let isDataLoading = false; // 数据加载状态
+let dsChangeInfo = null; // 存储定数变化信息
+let currentChart = null; // 存储当前的Chart实例
 
 // DOM元素
 const loadingOverlay = document.getElementById('loading-overlay');
@@ -20,20 +22,47 @@ document.addEventListener('DOMContentLoaded', () => {
     if (aboutModal) aboutModal.style.display = 'none';
     
     // 直接从网络加载数据
-    loadDataFromNetwork();
+    loadAllData();
     
     // 事件监听器
     setupEventListeners();
 });
 
-// 从网络加载数据并显示进度
-async function loadDataFromNetwork() {
+// 加载所有数据
+async function loadAllData() {
     if (isDataLoading) return;
     isDataLoading = true;
     
     // 显示加载界面
     loadingOverlay.style.display = 'flex';
     
+    try {
+        // 并行加载歌曲数据和定数变化数据
+        const [songData] = await Promise.all([
+            loadDataFromNetwork(),
+            loadDsChangeData() // 这个函数在 dschange.js 中定义
+        ]);
+        
+        musicInfo = songData;
+        
+        // 更新加载完成提示
+        document.querySelector('#loading-progress').textContent = '加载完成！';
+        
+        // 短暂延迟后隐藏加载界面并显示搜索界面
+        setTimeout(() => {
+            loadingOverlay.style.display = 'none';
+            searchContainer.style.display = 'block';
+            isDataLoading = false;
+        }, 500);
+    } catch (error) {
+        console.error('Error loading data:', error);
+        alert("加载数据失败，请刷新页面重试！");
+        isDataLoading = false;
+    }
+}
+
+// 从网络加载数据并显示进度
+async function loadDataFromNetwork() {
     try {
         // 使用fetch并添加进度指示
         const response = await fetch('static/all_data.json');
@@ -78,21 +107,10 @@ async function loadDataFromNetwork() {
         }
         
         const jsonString = new TextDecoder().decode(allChunks);
-        musicInfo = JSON.parse(jsonString);
-        
-        // 更新加载完成提示
-        document.querySelector('#loading-progress').textContent = '加载完成！';
-        
-        // 短暂延迟后隐藏加载界面并显示搜索界面
-        setTimeout(() => {
-            loadingOverlay.style.display = 'none';
-            searchContainer.style.display = 'block';
-            isDataLoading = false;
-        }, 500);
+        return JSON.parse(jsonString);
     } catch (error) {
         console.error('Error loading data from network:', error);
-        alert("加载数据失败，请刷新页面重试！");
-        isDataLoading = false;
+        throw error;
     }
 }
 
@@ -223,16 +241,17 @@ function displaySongInfo() {
     // 清空输入框
     guessIdInput.value = "";
 
-    // 设置标题
-    document.getElementById("modal-title").textContent = music.title;
-    
     // 构建模态框内容
-    infoModal.innerHTML = `
+    const modalHTML = `
         <div class="modal-header">
             <h2 id="modal-title">${music.title}</h2>
             <button id="close-modal" class="close-btn">&times;</button>
         </div>
-        <div class="modal-content">
+        <div class="song-tabs">
+            <button class="tab-btn active" data-tab="basic-info">基本信息</button>
+            <button class="tab-btn" data-tab="ds-change">定数变化</button>
+        </div>
+        <div id="basic-info" class="tab-content active">
             <div class="song-info-card">
                 <h3>基本信息</h3>
                 <div class="cover-container">
@@ -320,20 +339,277 @@ function displaySongInfo() {
                 </div>
             ` : ''}
         </div>
-        <div class="modal-footer">
-            <button id="close-modal-btn" class="btn btn-primary">关闭</button>
+        <div id="ds-change" class="tab-content">
+            <div class="song-info-card">
+                <h3>定数变化历史</h3>
+                <div class="ds-change-chart-container">
+                    <canvas id="dsChangeChart" width="800" height="400"></canvas>
+                </div>
+                <div id="ds-change-no-data" style="display: none;" class="no-data">无定数变化数据</div>
+            </div>
         </div>
     `;
+    
+    // 设置模态框内容
+    infoModal.innerHTML = modalHTML;
+    
+    // 添加选项卡切换事件监听
+    setupTabEvents(input);
     
     // 添加关闭按钮事件监听
     document.querySelectorAll('#close-modal, #close-modal-btn').forEach(button => {
         button.addEventListener('click', () => {
             infoModal.style.display = 'none';
             modalOverlay.style.display = 'none';
+            // 销毁图表以避免内存泄漏
+            if (currentChart) {
+                currentChart.destroy();
+                currentChart = null;
+            }
         });
     });
     
     // 显示模态框
-    modalOverlay.style.display = "block";
+    modalOverlay.style.display = "flex";
     infoModal.style.display = "block";
+}
+
+// 设置选项卡事件
+function setupTabEvents(songId) {
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            // 移除所有活动状态
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+            
+            // 添加当前选中项的活动状态
+            button.classList.add('active');
+            const tabId = button.dataset.tab;
+            document.getElementById(tabId).classList.add('active');
+            
+            // 如果切换到定数变化选项卡，初始化图表
+            if (tabId === 'ds-change') {
+                initDsChangeChart(songId);
+            }
+        });
+    });
+}
+
+// 初始化定数变化图表
+function initDsChangeChart(songId) {
+    // 如果已经有图表实例，先销毁它
+    if (currentChart) {
+        currentChart.destroy();
+        currentChart = null;
+    }
+    
+    if (!dsChangeData || !dsChangeData[songId]) {
+        document.getElementById('dsChangeChart').style.display = 'none';
+        document.getElementById('ds-change-no-data').style.display = 'block';
+        return;
+    }
+    
+    document.getElementById('dsChangeChart').style.display = 'block';
+    document.getElementById('ds-change-no-data').style.display = 'none';
+    
+    const songInfo = dsChangeData[songId];
+    
+    // 为每个难度准备数据
+    const chartData = {};
+    const versionsInSong = new Set();
+    
+    // 收集所有难度的版本数据
+    for (const [diffKey, diffInfo] of Object.entries(songInfo.difficulties)) {
+        chartData[diffKey] = [];
+        
+        // 遍历所有版本，按时间顺序收集数据
+        for (const version of versionOrder) {
+            if (diffInfo.versions[version] !== undefined) {
+                versionsInSong.add(version);
+                chartData[diffKey].push({
+                    version: version,
+                    ds: diffInfo.versions[version]
+                });
+            }
+        }
+    }
+    
+    // 如果没有版本数据，显示无数据提示
+    if (versionsInSong.size === 0) {
+        document.getElementById('dsChangeChart').style.display = 'none';
+        document.getElementById('ds-change-no-data').style.display = 'block';
+        return;
+    }
+    
+    // 只显示相关版本，从歌曲所在的第一个版本开始
+    const relevantVersions = versionOrder.filter(v => versionsInSong.has(v));
+    
+    // 准备图表数据
+    const datasets = [];
+    
+    // 为每个难度添加数据集
+    for (const [diffKey, dataPoints] of Object.entries(chartData)) {
+        if (dataPoints.length === 0) continue;
+        
+        const color = difficultyColors[diffKey] || '#999999';
+        const diffName = difficultyNames[diffKey] || diffKey;
+        
+        // 构建完整的数据点数组，包含空值以保持连续性
+        const fullDataPoints = [];
+        let lastKnownDs = null;
+        
+        for (const version of relevantVersions) {
+            const dataPoint = dataPoints.find(p => p.version === version);
+            
+            if (dataPoint) {
+                fullDataPoints.push(dataPoint.ds);
+                lastKnownDs = dataPoint.ds;
+            } else if (lastKnownDs !== null) {
+                // 使用上一个已知的定数值
+                fullDataPoints.push(lastKnownDs);
+            } else {
+                // 如果前面没有值，使用null表示缺失
+                fullDataPoints.push(null);
+            }
+        }
+        
+        datasets.push({
+            label: diffName,
+            data: fullDataPoints,
+            borderColor: color,
+            backgroundColor: color + '20',
+            tension: 0.1,
+            fill: false,
+            pointRadius: 5,
+            pointHoverRadius: 7
+        });
+    }
+    
+    // 创建图表
+    const ctx = document.getElementById('dsChangeChart').getContext('2d');
+    
+    // 图表数据
+    const chartDataConfig = {
+        labels: relevantVersions,
+        datasets: datasets
+    };
+    
+    // 获取数据集中的所有非null值
+    const allValues = datasets.flatMap(dataset => 
+        dataset.data.filter(val => val !== null)
+    );
+    
+    // 图表配置
+    const config = {
+        type: 'line',
+        data: chartDataConfig,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                mode: 'index',
+                intersect: false
+            },
+            plugins: {
+                tooltip: {
+                    enabled: true,
+                    mode: 'index',
+                    intersect: false,
+                    callbacks: {
+                        label: function(context) {
+                            return context.dataset.label + ': ' + context.parsed.y.toFixed(1);
+                        }
+                    },
+                    // 添加点击外部区域隐藏标签的配置
+                    external: function(context) {
+                        // 在图表容器之外添加点击监听器以隐藏标签
+                        const chartContainer = document.querySelector('.ds-change-chart-container');
+                        document.addEventListener('click', function(e) {
+                            if (!chartContainer.contains(e.target)) {
+                                const tooltip = context.tooltip;
+                                if (tooltip && tooltip.opacity !== 0) {
+                                    tooltip.setActiveElements([], {x: 0, y: 0});
+                                    context.chart.update();
+                                }
+                            }
+                        });
+                    }
+                },
+                title: {
+                    display: true,
+                    text: '定数变化历史',
+                    font: {
+                        size: 16
+                    },
+                    align: 'center', // 使标题居中对齐
+                    padding: {
+                        top: 10,
+                        bottom: 10
+                    }
+                },
+                legend: {
+                    position: 'top',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 15
+                    }
+                },
+                zoom: {
+                    pan: {
+                        enabled: true,
+                        mode: 'y'
+                    },
+                    zoom: {
+                        wheel: {
+                            enabled: true
+                        },
+                        pinch: {
+                            enabled: true
+                        },
+                        mode: 'y',
+                        onZoomComplete: function({chart}) {
+                            chart.update('none');
+                        }
+                    },
+                    limits: {
+                        y: {min: 0, max: 15}
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        autoSkip: true,
+                        maxRotation: 45,
+                        minRotation: 45
+                    }
+                },
+                y: {
+                    grid: {
+                        drawBorder: false
+                    },
+                    min: function() {
+                        const min = Math.floor(Math.min(...allValues) - 0.5);
+                        return Math.max(0, min);
+                    },
+                    max: function() {
+                        const max = Math.ceil(Math.max(...allValues) + 0.5);
+                        return max;
+                    },
+                    ticks: {
+                        stepSize: 0.5
+                    }
+                }
+            }
+        }
+    };
+    
+    // 创建图表
+    currentChart = new Chart(ctx, config);
 }

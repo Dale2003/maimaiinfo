@@ -19,6 +19,10 @@
     <link rel="preload" href="static/css/style.css" as="style">
     <link rel="stylesheet" href="static/css/style.css">
     <link rel="icon" href="static/img/favicon.ico" type="image/x-icon">
+    <!-- 添加Chart.js库 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- 添加Chart.js缩放插件 -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
 </head>
 <body>
     <div id="loading-overlay">
@@ -79,10 +83,12 @@
                 <li>谱面数据来源：<a href="https://www.diving-fish.com/maimaidx/prober/" target="_blank">水鱼查分器</a></li>
                 <li>曲绘数据来源：<a href="https://maimai.lxns.net" target="_blank">落雪查分器</a></li>
                 <li>别名数据来源：<a href="https://github.com/Yuri-YuzuChaN/maimaiDX" target="_blank">Yuri-YuzuChaN</a></li>
+                <li>定数变化数据来源：Menci、蓝色彗星、S.Noist、Clansty、AquaDX-Bot、dxrating.net</li>
             </ul>
         </div>
     </div>
 
+    <script src="static/js/dschange.js"></script>
     <script src="static/js/main.js"></script>
 </body>
 </html>
