@@ -25,7 +25,8 @@ const versionOrder = [
     "maimai DX BUDDiES",
     "maimai DX BUDDiES PLUS",
     "maimai DX PRiSM",
-    "maimai DX PRiSM PLUS"
+    "maimai DX PRiSM PLUS",
+    "maimai DX CiRCLE"
 ];
 
 // 颜色映射
