@@ -43,4 +43,4 @@ for id in chart["charts"]:
             pass
 
 with open('static/all_data_new.json', 'w', encoding='utf-8') as f:
-    json.dump(new_data, f)
+    json.dump(new_data, f, ensure_ascii=False, indent=4)
