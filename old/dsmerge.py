@@ -1,14 +1,14 @@
 import json
 
-with open("static/dschange_new.json", "r", encoding="utf-8") as f:
+with open("static/dschange_160updated_1120.json", "r", encoding="utf-8") as f:
     dschange = json.load(f)
 
-with open('/Users/dale/Documents/maimaicode/160_opt_new.json', 'r', encoding='utf-8') as f:
+with open('/Users/dale/Documents/maimaicode/160_opt_1205_new.json', 'r', encoding='utf-8') as f:
     ds160 = json.load(f)
 
 ds160 = {item['id']: item for item in ds160}
 
-with open('/Users/dale/Documents/maimaicode/160_opt_updated_remas.json', 'r', encoding='utf-8') as f:
+with open('/Users/dale/Documents/maimaicode/160_opt_1205.json', 'r', encoding='utf-8') as f:
     data = json.load(f)
 
 data = {item['id']: item for item in data}
@@ -35,5 +35,5 @@ for musicid in ds160:
             'ds': [{'maimai DX CiRCLE': lv} for lv in ds160[musicid]['ds']]}
 # 按int排序
 dschange = dict(sorted(dschange.items(), key=lambda item: int(item[0])))
-with open('static/dschange_160updated_1120.json', 'w', encoding='utf-8') as f:
+with open('static/dschange_160updated_1205.json', 'w', encoding='utf-8') as f:
     json.dump(dschange, f, ensure_ascii=False, indent=4)
