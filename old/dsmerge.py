@@ -22,19 +22,20 @@ for musicid in ds160:
             else:
                 dschange[musicid]["ds"].append({'maimai DX CiRCLE': lv})
     else:
-        if "CiRCLE" not in data[str(musicid)]["basic_info"]["from"]:
+        print(str(musicid) + " not in dschange")
+        if "PRiSM PLUS" in data[str(musicid)]["basic_info"]["from"]:
             dschange[musicid] = {
             'id': musicid,
             'name': ds160[musicid]['title'],
             'ds': [{'maimai DX PRiSM PLUS': lv,
                     'maimai DX CiRCLE': lv} for lv in ds160[musicid]['ds']]
             }
-        else:
+        elif "CiRCLE" in data[str(musicid)]["basic_info"]["from"]:
             dschange[musicid] = {
             'id': musicid,
             'name': ds160[musicid]['title'],
             'ds': [{'maimai DX CiRCLE': lv} for lv in ds160[musicid]['ds']]}
 # 按int排序
 dschange = dict(sorted(dschange.items(), key=lambda item: int(item[0])))
-with open('static/dschange_160updated_1226.json', 'w', encoding='utf-8') as f:
+with open('static/dschange_160updated_0211.json', 'w', encoding='utf-8') as f:
     json.dump(dschange, f, ensure_ascii=False, indent=4)
