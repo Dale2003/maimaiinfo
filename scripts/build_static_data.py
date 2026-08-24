@@ -13,6 +13,29 @@ from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_SOURCE_ROOT = REPO_ROOT.parent
+OLD_COURSE_VERSION_ORDER = ("元", "绿", "橙", "桃", "紫", "白", "辉")
+OLD_COURSE_VERSION_NAMES = {
+    "元": "maimai",
+    "绿": "maimai GreeN",
+    "橙": "maimai ORANGE",
+    "桃": "maimai PiNK",
+    "紫": "maimai MURASAKi",
+    "白": "maimai MiLK",
+    "辉": "maimai FiNALE",
+}
+OLD_COURSE_RANKS = (
+    "初段",
+    "二段",
+    "三段",
+    "四段",
+    "五段",
+    "六段",
+    "七段",
+    "八段",
+    "九段",
+    "十段",
+    "皆传",
+)
 
 
 def load_json(path: Path) -> Any:
@@ -139,6 +162,81 @@ def build_all_data(
     return all_data, stats
 
 
+def build_course_data(
+    current_courses: Any,
+    old_courses: Any,
+    all_data: dict[str, dict[str, Any]],
+) -> dict[str, Any]:
+    """Keep JP/CN DX courses and normalize old-frame courses into the same shape."""
+
+    if not isinstance(current_courses, dict):
+        raise ValueError("course.json must contain an object")
+    if not isinstance(old_courses, dict):
+        raise ValueError("maimai-course.json must contain an object")
+
+    normalized_old: dict[str, dict[str, Any]] = {}
+    for version in OLD_COURSE_VERSION_ORDER:
+        raw_version_courses = old_courses.get(version, {})
+        if not isinstance(raw_version_courses, dict):
+            raise ValueError(f"Invalid old-frame course version: {version}")
+
+        version_courses: dict[str, Any] = {}
+        for raw_course_name, variants in raw_version_courses.items():
+            if (
+                not isinstance(variants, list)
+                or not variants
+                or not isinstance(variants[0], list)
+            ):
+                raise ValueError(f"Invalid old-frame course: {version} {raw_course_name}")
+
+            display_name = str(raw_course_name)
+            if version != "辉" and display_name.startswith(version):
+                display_name = display_name[len(version):]
+            inner = display_name.startswith("里")
+            base_name = display_name[1:] if inner else display_name
+            if base_name not in OLD_COURSE_RANKS:
+                raise ValueError(f"Unknown old-frame course rank: {display_name}")
+            rank = OLD_COURSE_RANKS.index(base_name) + 1
+
+            course_songs = []
+            for encoded_song in variants[0]:
+                encoded = int(encoded_song)
+                music_id = str(encoded // 100)
+                old_difficulty = encoded % 100
+                if old_difficulty not in range(1, 7):
+                    raise ValueError(
+                        f"Invalid old-frame difficulty {old_difficulty}: "
+                        f"{version} {display_name}"
+                    )
+                if music_id not in all_data:
+                    raise ValueError(
+                        f"Unknown old-frame song id {music_id}: {version} {display_name}"
+                    )
+                course_songs.append(
+                    {
+                        "music_id": music_id,
+                        "music_name": all_data[music_id]["title"],
+                        "difficulty": str(old_difficulty - 2),
+                        "old_difficulty": old_difficulty,
+                    }
+                )
+
+            version_courses[display_name] = {
+                "course_name": display_name,
+                "course_id": (1100 if inner else 1000) + rank,
+                "course_data": course_songs,
+                "old_frame": True,
+                "old_version_name": OLD_COURSE_VERSION_NAMES[version],
+            }
+        normalized_old[version] = version_courses
+
+    return {
+        "jp": deepcopy(current_courses.get("jp", {})),
+        "cn": deepcopy(current_courses.get("cn", {})),
+        "old": normalized_old,
+    }
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -166,6 +264,7 @@ def main() -> None:
     chart_path = source_root / "static/music_chart.json"
     dschange_path = source_root / "meowmeow/plugins/dschange/dschange.json"
     course_path = source_root / "meowmeow/plugins/course/course.json"
+    old_course_path = source_root / "meowmeow/plugins/course/maimai-course.json"
 
     all_data, stats = build_all_data(
         load_json(music_path),
@@ -174,11 +273,13 @@ def main() -> None:
         load_json(chart_path),
     )
     dschange_data = load_json(dschange_path)
-    course_data = load_json(course_path)
+    course_data = build_course_data(
+        load_json(course_path),
+        load_json(old_course_path),
+        all_data,
+    )
     if not isinstance(dschange_data, dict):
         raise ValueError("dschange.json must contain an object")
-    if not isinstance(course_data, dict):
-        raise ValueError("course.json must contain an object")
 
     outputs = {
         output_root / "all_data.json": all_data,

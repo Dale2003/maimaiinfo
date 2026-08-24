@@ -41,7 +41,7 @@ maimaiinfo
 
 - `all_data.json`：以 `more_music_data.json` 为完整曲库，合并正式别名、本地别名和谱面拟合定数。
 - `dschange.json`：同步定数变更历史。
-- `course.json`：同步段位与课题曲数据。
+- `course.json`：同步日服、国服段位，并将旧框段位转换为统一格式；不托管国际服段位。
 
 在 `bot/maimaiinfo` 目录运行：
 
