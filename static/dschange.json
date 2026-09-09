@@ -87885,6 +87885,60 @@
             }
         ]
     },
+    "12016": {
+        "id": "12016",
+        "name": "相性×優勝ドロップス",
+        "ds": [
+            {
+                "maimai DX CiRCLE PLUS": 3.0
+            },
+            {
+                "maimai DX CiRCLE PLUS": 7.2
+            },
+            {
+                "maimai DX CiRCLE PLUS": 10.5
+            },
+            {
+                "maimai DX CiRCLE PLUS": 13.2
+            }
+        ]
+    },
+    "12017": {
+        "id": "12017",
+        "name": "光線歌",
+        "ds": [
+            {
+                "maimai DX CiRCLE PLUS": 2.0
+            },
+            {
+                "maimai DX CiRCLE PLUS": 6.2
+            },
+            {
+                "maimai DX CiRCLE PLUS": 10.2
+            },
+            {
+                "maimai DX CiRCLE PLUS": 12.8
+            }
+        ]
+    },
+    "12018": {
+        "id": "12018",
+        "name": "電脳眠眠猫",
+        "ds": [
+            {
+                "maimai DX CiRCLE PLUS": 2.0
+            },
+            {
+                "maimai DX CiRCLE PLUS": 6.5
+            },
+            {
+                "maimai DX CiRCLE PLUS": 10.4
+            },
+            {
+                "maimai DX CiRCLE PLUS": 13.2
+            }
+        ]
+    },
     "100018": {
         "name": "[協]Love You",
         "id": "100018",

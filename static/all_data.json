@@ -153878,6 +153878,231 @@
         },
         "alias": []
     },
+    "12016": {
+        "id": "12016",
+        "title": "相性×優勝ドロップス",
+        "type": "DX",
+        "ds": [
+            3.0,
+            7.2,
+            10.5,
+            13.2
+        ],
+        "level": [
+            "3",
+            "7",
+            "10",
+            "13"
+        ],
+        "cids": [
+            1,
+            1,
+            1,
+            1
+        ],
+        "charts": [
+            {
+                "notes": [
+                    137,
+                    10,
+                    4,
+                    8,
+                    12
+                ],
+                "charter": "-"
+            },
+            {
+                "notes": [
+                    300,
+                    17,
+                    9,
+                    21,
+                    6
+                ],
+                "charter": "-"
+            },
+            {
+                "notes": [
+                    364,
+                    60,
+                    41,
+                    9,
+                    39
+                ],
+                "charter": "はっぴー"
+            },
+            {
+                "notes": [
+                    486,
+                    50,
+                    115,
+                    35,
+                    54
+                ],
+                "charter": "Luxizhel"
+            }
+        ],
+        "basic_info": {
+            "title": "相性×優勝ドロップス",
+            "artist": "Idios",
+            "genre": "流行&动漫",
+            "bpm": "172",
+            "release_date": "20260904",
+            "from": "maimai でらっくす CiRCLE PLUS",
+            "is_new": true
+        },
+        "alias": []
+    },
+    "12017": {
+        "id": "12017",
+        "title": "光線歌",
+        "type": "DX",
+        "ds": [
+            2.0,
+            6.2,
+            10.2,
+            12.8
+        ],
+        "level": [
+            "2",
+            "6",
+            "10",
+            "12+"
+        ],
+        "cids": [
+            1,
+            1,
+            1,
+            1
+        ],
+        "charts": [
+            {
+                "notes": [
+                    138,
+                    12,
+                    3,
+                    8,
+                    5
+                ],
+                "charter": "-"
+            },
+            {
+                "notes": [
+                    235,
+                    11,
+                    12,
+                    29,
+                    8
+                ],
+                "charter": "-"
+            },
+            {
+                "notes": [
+                    311,
+                    67,
+                    17,
+                    32,
+                    28
+                ],
+                "charter": "Luxizhel"
+            },
+            {
+                "notes": [
+                    385,
+                    47,
+                    102,
+                    82,
+                    46
+                ],
+                "charter": "サファ太"
+            }
+        ],
+        "basic_info": {
+            "title": "光線歌",
+            "artist": "Guiano",
+            "genre": "niconico & VOCALOID",
+            "bpm": "138",
+            "release_date": "20260904",
+            "from": "maimai でらっくす CiRCLE PLUS",
+            "is_new": true
+        },
+        "alias": []
+    },
+    "12018": {
+        "id": "12018",
+        "title": "電脳眠眠猫",
+        "type": "DX",
+        "ds": [
+            2.0,
+            6.5,
+            10.4,
+            13.2
+        ],
+        "level": [
+            "2",
+            "6",
+            "10",
+            "13"
+        ],
+        "cids": [
+            1,
+            1,
+            1,
+            1
+        ],
+        "charts": [
+            {
+                "notes": [
+                    159,
+                    10,
+                    4,
+                    20,
+                    4
+                ],
+                "charter": "-"
+            },
+            {
+                "notes": [
+                    271,
+                    21,
+                    10,
+                    21,
+                    6
+                ],
+                "charter": "-"
+            },
+            {
+                "notes": [
+                    383,
+                    47,
+                    35,
+                    16,
+                    44
+                ],
+                "charter": "ブレーンバスター"
+            },
+            {
+                "notes": [
+                    612,
+                    11,
+                    164,
+                    24,
+                    32
+                ],
+                "charter": "じゃこレモン"
+            }
+        ],
+        "basic_info": {
+            "title": "電脳眠眠猫",
+            "artist": "桃寝ちのい",
+            "genre": "niconico & VOCALOID",
+            "bpm": "160",
+            "release_date": "20260904",
+            "from": "maimai でらっくす CiRCLE PLUS",
+            "is_new": true
+        },
+        "alias": []
+    },
     "12019": {
         "id": "12019",
         "title": "Cryogenic",
