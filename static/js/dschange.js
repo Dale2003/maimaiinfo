@@ -27,7 +27,8 @@ const versionOrder = [
     "maimai DX PRiSM",
     "maimai DX PRiSM PLUS",
     "maimai DX CiRCLE",
-    "maimai DX CiRCLE PLUS"
+    "maimai DX CiRCLE PLUS",
+    "maimai でらっくす MAGiCAL"
 ];
 
 // 颜色映射
@@ -92,6 +93,10 @@ function processRawDsChangeData(rawData) {
         // 处理每个难度的定数变化
         songInfo.ds.forEach((diffInfo, index) => {
             if (!diffInfo || Object.keys(diffInfo).length === 0) return;
+
+            for (const version of Object.keys(diffInfo)) {
+                if (!versionOrder.includes(version)) versionOrder.push(version);
+            }
             
             const diffKey = difficultyMapping[index] || `difficulty_${index}`;
             

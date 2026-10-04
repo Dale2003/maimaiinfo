@@ -10,6 +10,11 @@ from copy import deepcopy
 from pathlib import Path
 from typing import Any
 
+if __package__:
+    from .ds_history import build_dschange_data
+else:
+    from ds_history import build_dschange_data
+
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_SOURCE_ROOT = REPO_ROOT.parent
@@ -41,6 +46,14 @@ OLD_COURSE_RANKS = (
 def load_json(path: Path) -> Any:
     with path.open("r", encoding="utf-8") as file:
         return json.load(file)
+
+
+def song_data_path(source_root: Path, relative_path: str, legacy_path: str) -> Path:
+    """Prefer the bot's shared data, with support for older source layouts."""
+    shared_path = source_root / "meowmeow/plugins/_shared/song_data" / relative_path
+    if shared_path.is_file():
+        return shared_path
+    return source_root / legacy_path
 
 
 def write_json(path: Path, data: Any) -> None:
@@ -258,11 +271,28 @@ def main() -> None:
     source_root = args.source_root.resolve()
     output_root = REPO_ROOT / "static"
 
-    music_path = source_root / "meowmeow/plugins/maimaidx_pcinfo/more_music_data.json"
-    main_alias_path = source_root / "static/music_alias.json"
-    local_alias_path = source_root / "static/local_music_alias.json"
-    chart_path = source_root / "static/music_chart.json"
-    dschange_path = source_root / "meowmeow/plugins/dschange/dschange.json"
+    music_path = song_data_path(
+        source_root, "maimaidx_pcinfo/more_music_data.json",
+        "meowmeow/plugins/maimaidx_pcinfo/more_music_data.json",
+    )
+    main_alias_path = song_data_path(
+        source_root, "maimaidx_pcinfo/music_alias.json", "static/music_alias.json",
+    )
+    local_alias_path = song_data_path(
+        source_root, "maimaidx_pcinfo/local_music_alias.json", "static/local_music_alias.json",
+    )
+    chart_path = song_data_path(
+        source_root, "maimaidx_pcinfo/music_chart.json", "static/music_chart.json",
+    )
+    dschange_path = song_data_path(
+        source_root, "dschange/dschange.json", "meowmeow/plugins/dschange/dschange.json",
+    )
+    old_history_path = song_data_path(
+        source_root, "dschange/old-merge.json", "meowmeow/plugins/dschange/old-merge.json",
+    )
+    fallback_history_path = song_data_path(
+        source_root, "dschange/new_alias_lib.json", "meowmeow/plugins/dschange/new_alias_lib.json",
+    )
     course_path = source_root / "meowmeow/plugins/course/course.json"
     old_course_path = source_root / "meowmeow/plugins/course/maimai-course.json"
 
@@ -272,7 +302,12 @@ def main() -> None:
         load_json(local_alias_path),
         load_json(chart_path),
     )
-    dschange_data = load_json(dschange_path)
+    dschange_data = build_dschange_data(
+        load_json(dschange_path),
+        load_json(old_history_path),
+        load_json(fallback_history_path),
+        all_data,
+    )
     course_data = build_course_data(
         load_json(course_path),
         load_json(old_course_path),

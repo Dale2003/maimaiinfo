@@ -39,8 +39,8 @@ maimaiinfo
 
 仓库中的三份业务数据由当前 meowmeow 运行时数据生成：
 
-- `all_data.json`：以 `more_music_data.json` 为完整曲库，合并正式别名、本地别名和谱面拟合定数。
-- `dschange.json`：同步定数变更历史。
+- `all_data.json`：以共享 `more_music_data.json` 为完整曲库，包含 MAGiCAL 新曲与最新谱面数据，合并正式别名、本地别名和谱面拟合定数。
+- `dschange.json`：合并日服旧框、DX 至 MAGiCAL 的定数历史，保持“曲目 ID → 各难度版本定数”格式。旧框数据跳过 Easy；零占位和无法确定的定数不导出；`__increments__` 会展开到各曲目历史中。
 - `course.json`：同步日服、国服段位，并将旧框段位转换为统一格式；不托管国际服段位。
 
 在 `bot/maimaiinfo` 目录运行：
@@ -50,7 +50,13 @@ python3 scripts/build_static_data.py
 python3 scripts/build_static_data.py --check
 ```
 
-默认从相邻的 `bot/static` 与 `bot/meowmeow` 读取数据；也可以通过 `--source-root` 指定其他 `bot` 目录。
+默认从相邻的 `bot/static` 与 `bot/meowmeow` 读取数据；歌曲和历史数据优先使用 `meowmeow/plugins/_shared/song_data`，共享文件尚未迁移时回退到原有路径。旧框历史来自 `dschange/old-merge.json`，现代历史以 `dschange/dschange.json` 为准，`new_alias_lib.json` 仅补充现代源缺少的曲目。也可以通过 `--source-root` 指定其他 `bot` 目录。
+
+验证历史合并逻辑：
+
+```bash
+python3 -m unittest discover -s tests -v
+```
 
 ## 贡献
 欢迎任何形式的贡献！如果您有建议或发现问题，请提交issue或pull request。
